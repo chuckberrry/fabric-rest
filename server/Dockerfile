@@ -1,6 +1,6 @@
 FROM node:8-alpine
 
-LABEL com.altoros.version="0.11.0"
+LABEL com.altoros.version="0.12.0"
 
 # Create app directory
 WORKDIR /usr/src/app

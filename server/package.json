@@ -1,12 +1,12 @@
 {
   "name": "fabric-rest",
-  "version": "0.11.0",
-  "description": "API server for Hyperledger Fabric 1.0",
+  "version": "0.12.0",
+  "description": "API server for Hyperledger Fabric 1.x",
   "main": "app/index.js",
   "keywords": [
     "fabric-client sample app",
     "balance-transfer node sample",
-    "v1.0 fabric nodesdk sample"
+    "v1.x fabric nodesdk sample"
   ],
   "engines": {
     "node": ">=6.9.5",
@@ -28,8 +28,8 @@
     "express-bearer-token": "^2.1.1",
     "express-jwt": "^5.3.0",
     "express-session": "^1.15.6",
-    "fabric-ca-client": "^1.0.3",
-    "fabric-client": "^1.0.3",
+    "fabric-ca-client": "^1.2.1",
+    "fabric-client": "^1.2.1",
     "fs-extra": "^2.0.0",
     "jsonwebtoken": "^7.3.0",
     "log4js": "^0.6.38",
