@@ -5,7 +5,7 @@ angular.module('nsd.controller', [
   'nsd.controller.main',
   'nsd.controller.login',
   'nsd.controller.info',
-  'nsd.controller.query',
+  'nsd.controller.query'
 ]);
 
 angular.module('nsd.service', [
@@ -68,7 +68,7 @@ angular.module('nsd.app',[
       controllerAs: 'ctl',
       data:{
         name: 'Query/Invoke',
-        guest:false,
+        guest:false
         // default:true
       }
     })
@@ -94,12 +94,12 @@ angular.module('nsd.app',[
   var loginState = 'app.login';
 
   // https://github.com/angular-ui/ui-router/wiki#state-change-events
-  $rootScope.$on('$stateChangeStart',  function(event, toState, toParams, fromState, fromParams, options){
+  $rootScope.$on('$stateChangeStart',  function(event, toState, toParams, fromState/*, fromParams, options*/){
     // console.log('$stateChangeStart', event, toState, toParams);
 
     // check access
     var isAllowed = UserService.canAccess(toState);
-    var isLoginState = toState.name == loginState;
+    var isLoginState = toState.name === loginState;
 
     if ( isLoginState && !isAllowed){
       $log.warn('login state cannot be forbidden');
@@ -110,7 +110,7 @@ angular.module('nsd.app',[
     // prevent navigation to forbidden pages
     if ( !UserService.isAuthorized() && !isAllowed && !isLoginState){
       event.preventDefault(); // transitionTo() promise will be rejected with a 'transition prevented' error
-      if(fromState.name == ""){
+      if(fromState.name === ''){
         // just enter the page - redirect to login page
         goLogin();
       }
@@ -118,7 +118,7 @@ angular.module('nsd.app',[
   });
 
   // set state data to root scope
-  $rootScope.$on('$stateChangeSuccess',  function(event, toState, toParams, fromState, fromParams, options){
+  $rootScope.$on('$stateChangeSuccess',  function(event, toState, toParams/*, fromState, fromParams, options*/){
     $rootScope.$state = toState;
     $rootScope.$stateParams = toParams;
   });
@@ -141,7 +141,7 @@ angular.module('nsd.app',[
   $rootScope.stateDefault = defaultState; // TODO: remove?
 
   // instead of: $urlRouterProvider.otherwise('/default');
-  if($state.current.name == "" && defaultState){
+  if($state.current.name === '' && defaultState){
     $state.go(defaultState.name);
   }
 
@@ -261,7 +261,7 @@ angular.module('nsd.app',[
       var netConfig = _config['network-config'];
 
       Object.keys(netConfig)
-        .filter(function(key){ return key != 'orderer' })
+        .filter(function(key){ return key !== 'orderer'; })
         .forEach(function(orgId){
 
           // add org.id
@@ -271,7 +271,7 @@ angular.module('nsd.app',[
 
           // add peers stuff
           Object.keys(orgConfig)
-            .filter(function(key){ return key.startsWith('peer') })
+            .filter(function(key){ return key.startsWith('peer'); })
             .forEach(function(peerId){
               orgConfig[peerId].id   = peerId;
               orgConfig[peerId].host = getHost(orgConfig[peerId].requests);
@@ -288,7 +288,7 @@ angular.module('nsd.app',[
         var orgConfig = netConfig[orgId]||{};
 
         return Object.keys(orgConfig)
-          .filter(function(key){ return key.startsWith('peer')})
+          .filter(function(key){ return key.startsWith('peer');})
           .map(function(key){ return orgConfig[key]; });
     }
 
@@ -296,7 +296,7 @@ angular.module('nsd.app',[
       var netConfig = _config['network-config'];
 
       return Object.keys(netConfig)
-        .filter(function(key){ return key != 'orderer'})
+        .filter(function(key){ return key !== 'orderer';})
         .map(function(key){ return netConfig[key]; });
     }
 
@@ -305,7 +305,7 @@ angular.module('nsd.app',[
      */
     function getHost(address){
       //                             1111       222222
-      var m = (address||"").match(/^(\w+:)?\/\/([^\/]+)/) || [];
+      var m = (address||'').match(/^(\w+:)?\/\/([^\/]+)/) || [];
       return m[2];
     }
 
@@ -333,15 +333,18 @@ angular.module('nsd.app',[
 /**
  *
  */
+/* globals console, Materialize */
 function globalErrorHandler(e){
   console.warn('globalErrorHandler', e);
   e = e || {};
-  if(typeof e == "string"){
+  if(typeof e === 'string'){
     e = {message:e};
   }
   e.data = e.data || {};
 
-  var statusMsg = e.status ? 'Error' + (e.status != -1?' '+e.status:'') + ': ' + (e.statusText||(e.status==-1?"Connection refused":null)||"Unknown") : null;
+  var statusMsg = e.status ?
+    'Error' + (e.status !== -1?' '+e.status:'') + ': ' + (e.statusText||(e.status===-1?'Connection refused':null)||'Unknown') :
+    null;
   var reason = e.data.message || e.reason || e.message || statusMsg || e || 'Unknown error';
-  Materialize.toast(reason, 4000, 'mytoast red') // 4000 is the duration of the toast
+  Materialize.toast(reason, 4000, 'mytoast red'); // 4000 is the duration of the toast
 }

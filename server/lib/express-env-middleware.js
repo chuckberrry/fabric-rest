@@ -1,4 +1,4 @@
-
+'use strict';
 var js_template_pre = '(function (window) {  window.$VAR = ';
 var js_template_post = '; }(this));';
 
@@ -16,7 +16,7 @@ function envConfigMiddleware(varName, envConfig){
   var variable = /*req.query.var ||*/ varName;
   var js_code = js_template_pre.replace('$VAR', variable) + env_code + js_template_post;
 
-  return function(req, res, next){
+  return function(req, res){
     res.set({'Content-Type':'text/javascript'}).send(js_code);
   };
 }

@@ -13,7 +13,8 @@
   "undef": true,
   "unused": "vars",
   "strict": false,
-  "predef": ["$","jQuery","angular","_","moment","AWS","DynamoDB","Stripe","chance","emailAddresses","md5","toastr","jstz"],
+  "jquery": true,
+  "predef": ["angular","_","moment","toastr", "Promise"],
   "camelcase" : false,
   "sub":true
 }

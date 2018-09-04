@@ -1,3 +1,5 @@
+/* globals Base64, ASN1, console */
+/*jshint unused:false */
 angular.module('nsd.directive.certificate', [])
 
   // see here: https://lapo.it/asn1js
@@ -6,10 +8,10 @@ angular.module('nsd.directive.certificate', [])
       restrict:'E',
       scope: {
         data:'=',
-        title:"@"
+        title:'@'
       },
       templateUrl:'components/certificate.html',
-      link: function(scope, elm, attrs, ctrl) {
+      link: function(scope /*, elm, attrs, ctrl*/) {
 
         scope.$watch('data', decode);
 
@@ -24,7 +26,7 @@ angular.module('nsd.directive.certificate', [])
             decoded = ASN1.decode(der).toJSON();
             // console.log('decoded', decoded);
 
-            var certInfo = getCertificateInfo(decoded);
+            certInfo = getCertificateInfo(decoded);
             console.log('certInfo', certInfo);
 
             // oids = getAllObjectIdentifiers(decoded).filter(function(item){ return item !== true; });
@@ -36,8 +38,8 @@ angular.module('nsd.directive.certificate', [])
         }
 
 
-        var OBJECT_IDENTIFIER_TYPE = "OBJECT IDENTIFIER";
-        var OBJECT_VALUE_TYPE = "PrintableString";
+        var OBJECT_IDENTIFIER_TYPE = 'OBJECT IDENTIFIER';
+        var OBJECT_VALUE_TYPE = 'PrintableString';
 
         function getCertificateInfo(decoded){
             var result = {};
@@ -84,7 +86,7 @@ angular.module('nsd.directive.certificate', [])
                 key : key,
                 val : val,
                 _original:item
-              }
+              };
             }
 
             return result;
@@ -102,9 +104,9 @@ angular.module('nsd.directive.certificate', [])
           for (var i = 0, n = elements.length; i < n; i++) {
             var e = elements[i];
 
-            if(e.type == OBJECT_IDENTIFIER_TYPE){
+            if(e.type === OBJECT_IDENTIFIER_TYPE){
               current.key = e;
-            } else if(e.type == OBJECT_VALUE_TYPE){
+            } else if(e.type === OBJECT_VALUE_TYPE){
               current.value = e;
               result.push(current);
               current = {};
@@ -116,7 +118,7 @@ angular.module('nsd.directive.certificate', [])
         function _extractOI(asn1DecodedObject){
             var result = [];
 
-            if(asn1DecodedObject.type == OBJECT_IDENTIFIER_TYPE || asn1DecodedObject.type == OBJECT_VALUE_TYPE){
+            if(asn1DecodedObject.type === OBJECT_IDENTIFIER_TYPE || asn1DecodedObject.type === OBJECT_VALUE_TYPE){
               result.push(asn1DecodedObject);
             }else if(asn1DecodedObject.children){
               // iterate order is important here

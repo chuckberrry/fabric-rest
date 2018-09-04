@@ -1,3 +1,4 @@
+/* globals io */
 /**
  * @class SocketService
  * @classdesc

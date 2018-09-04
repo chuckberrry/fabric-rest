@@ -86,15 +86,15 @@ function UserService($log, $rootScope, ApiService, localStorageService) {
     }
     if(!$rootScope._tokenInfo.tokenData || !$rootScope._tokenInfo.tokenData.exp){
       // malformed token?
-      console.warn('UserService: no expiration date in token');
+      $log.warn('UserService: no expiration date in token');
       return;
     }
     var refreshTimeout = $rootScope._tokenInfo.tokenData.exp * 1000 - TOKEN_REFRESH_TIME - Date.now();
     if(refreshTimeout < 0) {
-      console.warn('Token expired');
+      $log.warn('Token expired');
       refreshTimeout = 0;
     }
-    console.warn('UserService: refresh token in %s ms', refreshTimeout);
+    $log.warn('UserService: refresh token in %s ms', refreshTimeout);
 
     if(_refreshTimer){
       clearTimeout(_refreshTimer);
@@ -112,7 +112,7 @@ function UserService($log, $rootScope, ApiService, localStorageService) {
    *
    */
   function parseJWTData(token){
-      token = token || "";
+      token = token || '';
       var tokenDataEncoded = token.split('.')[1];
       var tokenData = null;
       try{
@@ -131,7 +131,7 @@ function UserService($log, $rootScope, ApiService, localStorageService) {
     // check access
     var isAllowed = state.data && state.data.guest !== false;
 
-    // console.log('UserService.canAccess:', isAllowed, state.name);
+    // $log.log('UserService.canAccess:', isAllowed, state.name);
     return isAllowed; //&& UserService.isAuthorized();
   };
 

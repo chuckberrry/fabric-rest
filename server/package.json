@@ -16,7 +16,8 @@
     "start": "node $NODE_DEBUG_OPTION index",
     "dev": "CONFIG_FILE=\"../artifacts-dev/network-config.json\" npm -s start",
     "preset": "CONFIG_FILE=\"../artifacts-preset/network-config-local.json\" npm -s start",
-    "test": "export CONFIG_FILE=test/resources/network-config.json && mocha"
+    "test": "export CONFIG_FILE=test/resources/network-config.json && mocha",
+    "lint": "jshint ."
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -35,6 +36,7 @@
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
+    "jshint": "^2.9.6",
     "mocha": "^5.2.0"
   }
 }

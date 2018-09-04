@@ -1,12 +1,10 @@
-/* globals angular, console */
-
 /**
  * @class ApiService
  * @classdesc
  * @ngInject
  */
 function ApiService($log, $http, env) {
-  "use strict";
+  'use strict';
 
   // jshint shadow: true
   var ApiService = this;
@@ -28,7 +26,7 @@ function ApiService($log, $http, env) {
             [0]; //; || 'peer1';
 
           if (!QUERY_PEER) {
-            console.error('No peer to query. Check configuration');
+            $log.error('No peer to query. Check configuration');
             throw new Error('No peer to query. Check configuration');
           }
 
