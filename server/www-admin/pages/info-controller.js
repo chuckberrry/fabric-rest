@@ -3,7 +3,7 @@
  * @classdesc
  * @ngInject
  */
-function InfoController(ChannelService, ConfigLoader, $scope) {
+function InfoController(ChannelService, ConfigLoader, $scope, $log) {
 
   var ctl = this;
 
@@ -49,7 +49,7 @@ function InfoController(ChannelService, ConfigLoader, $scope) {
 
   ctl.getLastBlock = function(channelId){
     ctl.blockInfo = null;
-    if(!channelId) return null;
+    if(!channelId) { return null; }
     return ChannelService.getLastBlock(channelId).then(function(blockInfo){
       ctl.blockInfo = blockInfo;
     });
@@ -61,7 +61,7 @@ function InfoController(ChannelService, ConfigLoader, $scope) {
     ctl.transaction = null;
     ctl.result = null;
 
-    if(!ctl.blockInfo) return null;
+    if(!ctl.blockInfo) { return null; }
     var txId = ctl.blockInfo.data.data[0].payload.header.channel_header.tx_id;
     return ChannelService.getTransactionById(channelID, txId).then(function(transaction){
       ctl.transaction = transaction;
@@ -76,7 +76,7 @@ function InfoController(ChannelService, ConfigLoader, $scope) {
       result = {};
       // TODO: loop trough actions
       var ns_rwset = transaction.transactionEnvelope.payload.data.actions[0].payload.action.proposal_response_payload.extension.results.ns_rwset;
-      ns_rwset = ns_rwset.filter(function(action){return action.namespace != "lscc"}); // filter system chaincode
+      ns_rwset = ns_rwset.filter(function(action){return action.namespace !== 'lscc';}); // filter system chaincode
       ns_rwset.forEach(function(action){
         result[action.namespace] = action.rwset.writes.reduce(function(result, element){
           result[element.key] = element.is_delete ? null : element.value;
@@ -85,8 +85,8 @@ function InfoController(ChannelService, ConfigLoader, $scope) {
 
       });
     }catch(e){
-      console.info(e);
-      result = null
+      $log.info(e);
+      result = null;
     }
     return result;
   }
@@ -94,7 +94,7 @@ function InfoController(ChannelService, ConfigLoader, $scope) {
 
   $scope.$watch('selectedChannel', function(selectedChannel){
     var channelId = selectedChannel ? selectedChannel.channel_id : null;
-    if(!channelId) return;
+    if(!channelId) { return; }
       return ctl.getLastBlock(channelId)
         .then(function(){
           return ctl.getTransaction(channelId);
@@ -102,11 +102,11 @@ function InfoController(ChannelService, ConfigLoader, $scope) {
         .then(function(){
           return ctl.getChannelChaincodes(channelId);
         });
-  })
+  });
 
   ctl.getChannels()
     .then(function(){
-      return ctl.getChaincodes()
+      return ctl.getChaincodes();
     });
 }
 

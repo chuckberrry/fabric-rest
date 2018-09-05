@@ -4,26 +4,26 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
 // = is for two-way binding
 // @ simply reads the value (one-way binding)
 // & is used to bind functions
-.directive('blockchainLog', function($document, SocketService){
+.directive('blockchainLog', function($document, SocketService, $log){
   return {
     restrict:'E',
     replace: false,
     // scope: true,
     // scope: { name:'=', id:'=' },
-    template: '<div class="bc-wrapper" id="footerWrap" ng-init="ctl.init()">'
-                +'<div id="bc-wrapper-block" ng-class="ctl.getStatusClass()">'
-                  +'<i class="material-icons" title="{{ctl.getStatusText()}}">device_hub</i>'
+    template: '<div class="bc-wrapper" id="footerWrap" ng-init="ctl.init()">'+
+                '<div id="bc-wrapper-block" ng-class="ctl.getStatusClass()">'+
+                  '<i class="material-icons" title="{{ctl.getStatusText()}}">device_hub</i>'+
 
-                  +'<div id="details" ng-show="!!ctl.blockInfo" >'
-                    +'<p> Block:    {{ctl.blockInfo.header.data_hash|limitTo:25}}...'
-                      +'<br> TXID:     {{ctl.blockInfo.data.data[0].payload.header.channel_header.tx_id|limitTo:25}}...'
-                      +'<br> Type:     {{ctl.blockInfo.data.data[0].payload.header.channel_header.type}}'
-                      +'<br> Created:  {{ctl.blockInfo.data.data[0].payload.header.channel_header.timestamp}}'
-                      +'<br> Height:   {{ctl.blockInfo.header.number}}'
-                    +'</p>'
-                    +'<hr class="line">'
-                    +'<certificate title="false" data="ctl.blockInfo.data.data[0].payload.data.actions[0].header.creator.IdBytes"></certificate>'
-                  +'</div>'
+                  '<div id="details" ng-show="!!ctl.blockInfo" >'+
+                    '<p> Block:    {{ctl.blockInfo.header.data_hash|limitTo:25}}...'+
+                      '<br> TXID:     {{ctl.blockInfo.data.data[0].payload.header.channel_header.tx_id|limitTo:25}}...'+
+                      '<br> Type:     {{ctl.blockInfo.data.data[0].payload.header.channel_header.type}}'+
+                      '<br> Created:  {{ctl.blockInfo.data.data[0].payload.header.channel_header.timestamp}}'+
+                      '<br> Height:   {{ctl.blockInfo.header.number}}'+
+                    '</p>'+
+                    '<hr class="line">'+
+                    '<certificate title="false" data="ctl.blockInfo.data.data[0].payload.data.actions[0].header.creator.IdBytes"></certificate>'+
+                  '</div>'+
 
                   // +'<div class="block" style="opacity: 1; left: 36px;">016</div>'
                   // +'<div class="block" style="opacity: 1; left: 72px;">017</div>'
@@ -32,10 +32,10 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
                   // +'<div class="block" style="opacity: 1; left: 180px;">020</div>'
                   // +'<div class="block" style="opacity: 1; left: 216px;">021</div>'
                   // +'<div class="block lastblock" style="opacity: 1; left: 252px;">022</div>'
-                +'</div>'
-              +'</div>',
+                '</div>'+
+              '</div>',
     controllerAs: 'ctl',
-    controller: function($scope, $element, $attrs, $transclude, $rootScope){
+    controller: function($scope, $element/*, $attrs, $transclude, $rootScope*/){
       var ctl = this;
 
       var clicked=false;
@@ -55,7 +55,7 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
         'connected' :    'light-blue-text aqua-text',
         'disconnected' : 'red-text',
         'connecting' :   'orange-text',
-        'default' :      '',
+        'default' :      ''
       };
 
       /**
@@ -65,9 +65,9 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
         // var socket = io('ws://'+location.hostname+':8155/');
         socket = SocketService.getSocket();
 
-        console.log('chainblock event registered');
+        $log.log('chainblock event registered');
         socket.on('chainblock', function(payload){
-          console.log('server chainblock:', payload);
+          $log.log('server chainblock:', payload);
           // $rootScope.$emit('chainblock', payload);
           addChainblocks(payload);
         });
@@ -110,13 +110,13 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
 
       function _onBlockClick(e){
         clicked = !clicked;
-        return;
 
+        //return;
         //demo animation
-        var $block = $(e.target);
-        var width = $(document).width();
-        $block.css({left: '+='+width }).animate({ left: '-='+width } );
-        e.stopPropagation();
+        // var $block = $(e.target);
+        // var width = $(document).width();
+        // $block.css({left: '+='+width }).animate({ left: '-='+width } );
+        // e.stopPropagation();
       }
 
       function getBlockHoverIn(tx){
@@ -127,7 +127,7 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
               $scope.$digest();
               // $details.css({left : $(e.target).position().left }).stop(true).fadeIn();
             // }
-          }
+          };
       }
 
       function onBlockHoverOut(e){
@@ -151,5 +151,5 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
       }
 
     }//-controller
-}});
+};});
 

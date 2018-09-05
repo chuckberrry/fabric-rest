@@ -94,9 +94,9 @@ function getHost(url){
 function readFilePromise (file) {
   return new Promise(function(resolve, reject){
     fs.readFile(file, function (err, data) {
-      return !err
-        ? resolve(data)
-        : reject(err);
+      return !err ?
+        resolve(data) :
+        reject(err);
     });
   });
 }

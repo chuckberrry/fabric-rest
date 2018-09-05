@@ -15,7 +15,7 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
 
   // init
   var orgs = ConfigLoader.getOrgs();
-  var allPeers = []
+  var allPeers = [];
   orgs.forEach(function(org){
     var peers = ConfigLoader.getPeers(org.id);
     allPeers.push.apply(allPeers, peers);
@@ -28,7 +28,7 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
 
   ctl.getPeers = function(){
     return allPeers;
-  }
+  };
 
 
   ctl.getChannels = function(){
@@ -73,7 +73,7 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
       .finally(function(){
         ctl.invokeInProgress = false;
       });
-  }
+  };
 
   function getTxResult(transaction){
     var result = null;
@@ -81,7 +81,7 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
       result = {};
       // TODO: loop trough actions
       var ns_rwset = transaction.transactionEnvelope.payload.data.actions[0].payload.action.proposal_response_payload.extension.results.ns_rwset;
-      ns_rwset = ns_rwset.filter(function(action){return action.namespace != "lscc"}); // filter system chaincode
+      ns_rwset = ns_rwset.filter(function(action){return action.namespace !== 'lscc';}); // filter system chaincode
       ns_rwset.forEach(function(action){
         result[action.namespace] = action.rwset.writes.reduce(function(result, element){
           result[element.key] = element.is_delete ? null : element.value;
@@ -90,8 +90,8 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
 
       });
     }catch(e){
-      console.info(e);
-      result = null
+      $log.info(e);
+      result = null;
     }
     return result;
   }
@@ -123,7 +123,7 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
       .finally(function(){
         ctl.invokeInProgress = false;
       });
-  }
+  };
 
 
   //

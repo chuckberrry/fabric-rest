@@ -18,8 +18,9 @@ window.onerror = function(msg, url, line, colno, error) {
 };
 
 function _processError(error){
-   console.error("FATAL", error);
-   alert("FATAL: " + error);
+  /* globals console, alert */
+   console.error('FATAL', error);
+   alert('FATAL: ' + error);
 
    // TODO: make separate fatal handler
    // document.addEventListener('DOMContentLoaded', function(){

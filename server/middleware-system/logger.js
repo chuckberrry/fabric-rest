@@ -1,4 +1,4 @@
-
+'use strict';
 
 var log4js  = require('log4js');
 var logger  = log4js.getLogger('API');
@@ -9,4 +9,4 @@ module.exports = function(){
     logger.debug('%s  %s', req.method.toUpperCase(), req.url);
     next();
   };
-}
+};
