@@ -159,7 +159,7 @@ The paths shown below will need to be adjusted to match your docker-compose file
 
 ```
 
-### Discover IP Addresses
+### Discover IP Addresses###
 
 To retrieve the IP Address for one of your network entities, issue the following command:
 
