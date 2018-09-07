@@ -12,6 +12,7 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
   ctl.chaincodes = [];
   ctl.transaction = null;
   ctl.invokeInProgress = false;
+  ctl.params = {current: null, history: []};
 
   // init
   var orgs = ConfigLoader.getOrgs();
@@ -24,6 +25,16 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
   // allPeers.unshift({
   //   "server-hostname": "Select peers"
   // });
+
+  function addHistoryParams(fcn, args) {
+    ctl.params.current = {fcn: fcn, args: JSON.stringify(args)};
+    var objInArray = ctl.params.history.filter(function(obj) {
+      return obj.fcn === fcn && obj.args === JSON.stringify(args);
+    });
+    if (!objInArray.length) {
+      ctl.params.history.push(ctl.params.current);
+    }
+  }
 
 
   ctl.getPeers = function(){
@@ -54,6 +65,8 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
     }catch(e){
       $log.warn(e);
     }
+
+    addHistoryParams(fcn, args);
 
     ctl.transaction = null;
     ctl.error = null;
@@ -107,6 +120,8 @@ function QueryController($scope, ChannelService, ConfigLoader, $log, $q) {
     }catch(e){
       $log.warn(e);
     }
+
+    addHistoryParams(fcn, args);
 
     ctl.transaction = null;
     ctl.error = null;
