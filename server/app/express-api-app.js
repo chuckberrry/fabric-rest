@@ -35,7 +35,7 @@ var query         = require('../lib-fabric/query.js');
 var config = require('../config.json');
 var packageInfo = require('../package.json');
 
-const ORG = process.env.ORG || null;
+const ORG = process.env.ORG;
 const USERNAME = config.user.username;
 const LEDGER_CONFIG_DIR  = '../artifacts/channel/';
 const GENESIS_BLOCK_FILE = 'genesis.block';
@@ -50,6 +50,7 @@ if(!ORG){
 
 
 var app = express(); // root app
+// custom middleware: use res.promise() to send promise response
 app.use(expressPromise());
 var adminPartyApp = express();
 adminPartyApp.use(expressPromise());
@@ -65,8 +66,6 @@ module.exports = function(){ return app; };
 app.use(bodyParser.json());
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: false }));
-// custom middleware: use res.promise() to send promise response
-app.use(expressPromise());
 
 // relax cors
 function corsCb(req, cb){
@@ -136,16 +135,17 @@ app.use(function(req, res, next) {
     });
 });
 
+function _getToken(username, org) {
+  return jwt.sign({
+    exp: Math.floor(Date.now() / 1000) + parseInt(config.jwt_expiretime),
+    username: username,
+    orgName: org
+  }, app.get('secret'));
+}
 
 // refresh token
 app.post('/token', function(req, res) {
-    var token = jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + parseInt(config.jwt_expiretime),
-        username: req.username,
-        orgName: req.orgname
-    }, app.get('secret'));
-
-    res.send({token: token});
+    res.send({token: _getToken(req.username, req.orgname)});
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -164,28 +164,34 @@ adminPartyApp.post('/users', function(req, res) {
         res.error(getErrorMessage('\'username\''));
         return;
     }
-    var token = jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + parseInt(config.jwt_expiretime),
-        username: username,
-        orgName: ORG
-    }, app.get('secret'));
+
+    let authMiddleware;
+    try {
+      authMiddleware = require('../middleware-auth');
+    } catch(e) {
+      logger.debug('There is no additional auth middleware. Continue as is');
+      authMiddleware = Promise.resolve.bind(Promise);
+    }
 
     res.promise(
-        helper.getClientUser(username, ORG)
-          .then((user) => {
-            return {
-              success: true,
-              secret: user._enrollmentSecret,
-              message: username + ' enrolled Successfully',
-            };
-          })
-          .then(function(response) {
-            if (response && typeof response !== 'string') {
-                response.token = token;
-                return response;
-            } else {
-                return Promise.reject(response);
-            }
+        authMiddleware(username, req.body.password, ORG)
+          .then(() => {
+            return helper.getClientUser(username, ORG)
+              .then(user => {
+                return {
+                  success: true,
+                  secret: user._enrollmentSecret,
+                  message: username + ' enrolled Successfully',
+                };
+              })
+              .then(response => {
+                if (response && typeof response !== 'string') {
+                  response.token = _getToken(username, ORG);
+                  return response;
+                } else {
+                  return Promise.reject(response);
+                }
+              });
           })
     );
 });
