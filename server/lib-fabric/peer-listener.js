@@ -53,6 +53,8 @@ var initPromise = null;
  */
 var _wasConnectedAtStartup = false;
 
+var RETRY_ATTEMPTS = 5;
+
 /**
  * @param {Array<string>} peersUrls
  * @param {string} username - admin username (or ID from network-config?)
@@ -92,6 +94,7 @@ function rotatePeers(){
 function listen(){
   return initPromise.then(function () {
 
+    let attempts = 0;
     _connect();
 
     //
@@ -148,7 +151,10 @@ function listen(){
       }
 
       if(!eventhub._connected && !_wasConnectedAtStartup){
-        throw e;
+        logger.error(e);
+        if (attempts++ > RETRY_ATTEMPTS) {
+          throw e;
+        }
       }
 
       logger.trace('Set reconnection timer');
