@@ -1,13 +1,9 @@
 /**
  * Created by maksim on 7/13/17.
  */
-var tools = require('../../lib/tools');
+const tools = require('../../lib/tools');
 
-function clone(obj){
-  return JSON.parse(JSON.stringify(obj));
-}
-
-var assert = require('assert');
+const assert = require('assert');
 
 describe('Tools', function(){
 
@@ -20,7 +16,7 @@ describe('Tools', function(){
     assert.equal( tools.replaceLong({low: 3, high: 0, unsigned: false}), "SIGNED:3");
     assert.equal( tools.replaceLong({low: 4, high: 1, unsigned: false}), "OVERFLOW:4");
 
-    var notLong = {low: 5, high: 1, unsigned: false, me:2};
+    const notLong = {low: 5, high: 1, unsigned: false, me:2};
     assert.deepEqual( tools.replaceLong(notLong), notLong);
 
   });

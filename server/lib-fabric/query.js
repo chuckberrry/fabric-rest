@@ -14,8 +14,8 @@
  *  limitations under the License.
  */
 "use strict";
-var helper = require('./helper.js');
-var logger = helper.getLogger('Query');
+const helper = require('./helper.js');
+const logger = helper.getLogger('Query');
 
 
 /**
@@ -28,20 +28,20 @@ var logger = helper.getLogger('Query');
  * @param {string} org
  * @returns {Promise}
  */
-var queryChaincode = function(peer, channelID, chaincodeName, args, fcn, username, org) {
+const queryChaincode = function(peer, channelID, chaincodeName, args, fcn, username, org) {
 
   /**
    * @type {Peer}
    */
-	var target  = getPeer(peer, org);
+	const target  = getPeer(peer, org);
 
   return helper.getChannelForOrg(channelID, username, org)
     .then(channel=>{
-      var client = channel.getClient();
+      const client = channel.getClient();
 
-			var tx_id = client.newTransactionID();
+			const tx_id = client.newTransactionID();
 			// send query
-			var request = {
+			const request = {
 				targets: [target],
 				chaincodeId: chaincodeName,
 				txId: tx_id,
@@ -58,7 +58,7 @@ var queryChaincode = function(peer, channelID, chaincodeName, args, fcn, usernam
 		}).then((response_payloads) => {
 			// here we got result from all peers if request.targets not set
 			// TODO: what we should do with the rest of payloads? compare it?
-			var result = response_payloads[0];
+			let result = response_payloads[0];
 			if(result instanceof Error){
 				throw result;
 			}
@@ -85,8 +85,8 @@ var queryChaincode = function(peer, channelID, chaincodeName, args, fcn, usernam
 /**
  *
  */
-var getBlockByNumber = function(peer, channelID, blockNumber, username, org) {
-	var target = getPeer(peer, org);
+const getBlockByNumber = function(peer, channelID, blockNumber, username, org) {
+	const target = getPeer(peer, org);
 
   return helper.getChannelForOrg(channelID, username, org)
 		.then(channel => {
@@ -117,8 +117,8 @@ var getBlockByNumber = function(peer, channelID, blockNumber, username, org) {
 /**
  *
  */
-var getTransactionByID = function(peer, channelID, trxnID, username, org) {
-	var target = getPeer(peer, org);
+const getTransactionByID = function(peer, channelID, trxnID, username, org) {
+	const target = getPeer(peer, org);
 
   return helper.getChannelForOrg(channelID, username, org)
     .then(channel => {
@@ -148,8 +148,8 @@ var getTransactionByID = function(peer, channelID, trxnID, username, org) {
 /**
  *
  */
-var getBlockByHash = function(peer, channelID, hash, username, org) {
-	var target = getPeer(peer, org);
+const getBlockByHash = function(peer, channelID, hash, username, org) {
+	const target = getPeer(peer, org);
 
 	return helper.getChannelForOrg(channelID, username, org)
 		.then(channel => {
@@ -182,8 +182,8 @@ var getBlockByHash = function(peer, channelID, hash, username, org) {
  * @param {string} username
  * @param {string} org
  */
-var getChannelInfo = function(peer, channelID, username, org) {
-  var target  = getPeer(peer, org);
+const getChannelInfo = function(peer, channelID, username, org) {
+  const target  = getPeer(peer, org);
 
   return helper.getChannelForOrg(channelID, username, org)
     .then(channel => {
@@ -199,8 +199,8 @@ var getChannelInfo = function(peer, channelID, username, org) {
 				// logger.debug('===========================================');
 				//logger.debug(blockchainInfo);
 
-				var currentBlockHash  = blockchainInfo.currentBlockHash.toBase64();
-				var previousBlockHash = blockchainInfo.previousBlockHash.toBase64();
+				const currentBlockHash  = blockchainInfo.currentBlockHash.toBase64();
+				const previousBlockHash = blockchainInfo.previousBlockHash.toBase64();
 
 				return {currentBlockHash:currentBlockHash, previousBlockHash:previousBlockHash};
 			} else {
@@ -222,10 +222,10 @@ var getChannelInfo = function(peer, channelID, username, org) {
  */
 //getInstalledChaincodes
 // should be called as admin
-var getInstalledChaincodes = function(peer, channelID, type, username, org) {
-	var target = getPeer(peer, org);
+const getInstalledChaincodes = function(peer, channelID, type, username, org) {
+	const target = getPeer(peer, org);
 
-	var p;
+	let p;
   if (type === 'installed') {
     p = helper.getClientForOrg(username, org)
 			.then(client=>client.queryInstalledChaincodes(target));
@@ -255,7 +255,7 @@ var getInstalledChaincodes = function(peer, channelID, type, username, org) {
 			return response;
 		} else {
 			logger.error('response is null');
-		  throw new Error('Empty response: queryInstalledChaincodes/queryInstantiatedChaincodes');
+			throw new Error('Empty response: queryInstalledChaincodes/queryInstantiatedChaincodes');
 		}
 	}, (err) => {
 		logger.error('Failed to send query due to error: ' + err.stack ? err.stack : err);
@@ -270,8 +270,8 @@ var getInstalledChaincodes = function(peer, channelID, type, username, org) {
 /**
  *
  */
-var getChannels = function(peer, username, org) {
-	var target = getPeer(peer, org);
+const getChannels = function(peer, username, org) {
+	const target = getPeer(peer, org);
 
 	return helper.getClientForOrg(username, org)
 		.then(client => {
@@ -283,12 +283,12 @@ var getChannels = function(peer, username, org) {
 		}).then((response) => {
 			if (response) {
 				logger.debug('<<< channels >>>');
-				var channelNames = [];
+				const channelNames = [];
 				for (let i = 0; i < response.channels.length; i++) {
 					channelNames.push(response.channels[i].channel_id);
 				}
 				logger.debug(JSON.stringify(channelNames));
-				var channels = response.channels.map(function(channel){
+				const channels = response.channels.map(function(channel){
 					return {
 						channel_id : channel.channel_id, // deprecated
 						name : channel.channel_id
@@ -315,7 +315,7 @@ var getChannels = function(peer, username, org) {
  * @returns {EventHub|Peer}
  */
 function getPeer(peerID, orgID) {
-	var target = null;
+	let target = null;
 	if (typeof orgID !== 'undefined') {
 		let targets = helper.newPeers([helper.getPeerAddressByName(orgID, peerID)]);
 		if (targets && targets.length > 0) {

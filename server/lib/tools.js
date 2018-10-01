@@ -1,9 +1,10 @@
 /**
  * Created by maksim on 7/15/17.
  */
+/*eslint no-console:0*/
 "use strict";
 
-var fs = require('fs');
+const fs = require('fs');
 
 module.exports = {
   replaceBuffer   : replaceBuffer,
@@ -49,8 +50,7 @@ function replaceBuffer(data){
 function replaceLong(data){
   if(isObject(data)){
 
-    /* jshint -W014 */
-    var isLong = typeof data.low !== "undefined"
+    const isLong = typeof data.low !== "undefined"
       && typeof data.high !== "undefined"
       && typeof data.unsigned !== "undefined"
       && Object.keys(data).length === 3;
@@ -85,7 +85,7 @@ function replaceLong(data){
  */
 function getHost(url){
   //                             1111       222222
-  var m = (url||"").match(/^(\w+:)?\/\/([^\/]+)/) || [];
+  const m = (url||"").match(/^(\w+:)?\/\/([^/]+)/) || [];
   return m[2];
 }
 

@@ -108,7 +108,7 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
 
 
 
-      function _onBlockClick(e){
+      function _onBlockClick(/*e*/){
         clicked = !clicked;
 
         //return;
@@ -121,7 +121,7 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
 
       function getBlockHoverIn(tx){
           // blockInfo
-          return function(e){
+          return function(/*e*/){
             // if(!ctl.blockInfo || ctl.blockInfo.txid != tx.txid){
               ctl.blockInfo = tx;
               $scope.$digest();
@@ -130,7 +130,7 @@ angular.module('nsd.directive.blockchain', ['nsd.service.socket'])
           };
       }
 
-      function onBlockHoverOut(e){
+      function onBlockHoverOut(/*e*/){
           if(!clicked){
             ctl.blockInfo = null;
             $scope.$digest();

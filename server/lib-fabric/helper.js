@@ -14,39 +14,39 @@
  *  limitations under the License.
  */
 'use strict';
-var log4js = require('log4js');
-var logger = log4js.getLogger('Helper');
+const log4js = require('log4js');
+const logger = log4js.getLogger('Helper');
 logger.setLevel('DEBUG');
 
-var path = require('path');
-var fs = require('fs-extra');
-var User = require('fabric-client/lib/User.js');
-var Peer = require('fabric-client/lib/Peer.js');
-var EventHub = require('fabric-client/lib/EventHub.js');
-var Orderer = require('fabric-client/lib/Orderer.js');
-var Channel = require('fabric-client/lib/Channel.js');
+const path = require('path');
+const fs = require('fs-extra');
+const User = require('fabric-client/lib/User.js');
+const Peer = require('fabric-client/lib/Peer.js');
+const EventHub = require('fabric-client/lib/EventHub.js');
+const Orderer = require('fabric-client/lib/Orderer.js');
+const Channel = require('fabric-client/lib/Channel.js');
 
-var CopService = require('fabric-ca-client');
-var config = require('../config.json');
+const CopService = require('fabric-ca-client');
+const config = require('../config.json');
 
-var hfc = require('./hfc');
-var ORGS = hfc.getConfigSetting('network-config');
-var CONFIG_DIR = hfc.getConfigSetting('config-dir');
-
-/**
- * @type {Object<Promise<Client>>}
- */
-var clients = {};
+const hfc = require('./hfc');
+const ORGS = hfc.getConfigSetting('network-config');
+const CONFIG_DIR = hfc.getConfigSetting('config-dir');
 
 /**
  * @type {Object<Promise<Client>>}
  */
-var caClients = {};
+const clients = {};
+
+/**
+ * @type {Object<Promise<Client>>}
+ */
+const caClients = {};
 
 /**
  * @type {Object<CopService>}
  */
-var caServices = {};
+const caServices = {};
 
 //
 
@@ -57,8 +57,8 @@ var caServices = {};
  * @return {CopService}
  */
 function getCAService(orgID){
-  var username = getCAAdminCredentials().username;
-  var key = username+'/'+orgID;
+  const username = getCAAdminCredentials().username;
+  const key = username+'/'+orgID;
 
   if(!caServices[key]) {
     let caUrl = ORGS[orgID].ca;
@@ -85,9 +85,9 @@ function getCAService(orgID){
  */
 function _initClientForOrg(username, orgID){
 
-  var client = _newClient(username, orgID);
+  const client = _newClient(username, orgID);
   // init client key store and context
-  var p;
+  let p;
   if( isAdmin(username) ){
     // p = _setClientAdminContext(client, orgID);
     p = _setClientContextFromFile(client, orgID);
@@ -111,7 +111,7 @@ function _newClient(username, orgID){
     throw new Error('No such organisation: '+orgID);
   }
 
-  let client = new hfc(); // jshint ignore: line
+  let client = new hfc();
   let cryptoSuite = hfc.newCryptoSuite();
   cryptoSuite.setCryptoKeyStore(hfc.newCryptoKeyStore({path: getKeyStoreForOrg(username, orgID)}));
   client.setCryptoSuite(cryptoSuite);
@@ -202,7 +202,7 @@ function _setupPeer(orgID, peerID){
  * @returns {Orderer}
  */
 function newOrderer() {
-	var caRootsPath = ORGS['orderer'].tls_cacerts;
+	const caRootsPath = ORGS['orderer'].tls_cacerts;
 	let data = fs.readFileSync(path.join(CONFIG_DIR, caRootsPath));
 	let caroots = Buffer.from(data).toString();
 	return new Orderer(ORGS.orderer.url, {
@@ -216,8 +216,8 @@ function newOrderer() {
  * @returns {Array<string>}
  */
 function readAllFiles(dir) {
-	var files = fs.readdirSync(dir);
-	var certs = [];
+	const files = fs.readdirSync(dir);
+	const certs = [];
 	files.forEach((file_name) => {
 		let file_path = path.join(dir,file_name);
 		let data = fs.readFileSync(file_path);
@@ -321,7 +321,7 @@ function _getPeerInfoByUrl(peerUrl, orgID){
  */
 function newPeer(peerUrl) {
 
-  var peerInfo = _getPeerInfoByUrl(peerUrl);
+  const peerInfo = _getPeerInfoByUrl(peerUrl);
   if(!peerInfo) {
     throw new Error('Failed to find a peer matching the url: ' + peerUrl);
   }
@@ -347,7 +347,7 @@ function newEventHub(peerUrl, username, orgID) {
 
   return getClientForOrg(username, orgID)
     .then(client => {
-      var peerInfo = _getPeerInfoByUrl(peerUrl, orgID);
+      const peerInfo = _getPeerInfoByUrl(peerUrl, orgID);
       if (!peerInfo) {
         throw new Error('Failed to find a peer matching the url: ' + peerUrl);
       }
@@ -423,8 +423,8 @@ function getCAClientForOrg(orgID) {
   }
   // caching
   if(!caClients[orgID]){
-    var adminUser = getCAAdminCredentials();
-    var client = _newClient(adminUser.username, orgID);
+    const adminUser = getCAAdminCredentials();
+    const client = _newClient(adminUser.username, orgID);
     caClients[orgID] = _setClientCAAdminContext(client, orgID).then(()=>client);
   }
   return caClients[orgID];
@@ -453,7 +453,7 @@ function _getClientForOrg(username, orgID) {
  * @param {string} org
  * @returns {string}
  */
-var getMspID = function(org) {
+const getMspID = function(org) {
 	logger.debug('Msp ID : ' + ORGS[org].mspid);
 	return ORGS[org].mspid;
 };
@@ -463,9 +463,9 @@ var getMspID = function(org) {
  * @ param {string} orgID
  */
 function getCAAdminCredentials(){
-  var users = config.users;
-  var username = users[0].username;
-  var password = users[0].secret;
+  const users = config.users;
+  const username = users[0].username;
+  const password = users[0].secret;
   return {username:username, password:password};
 }
 
@@ -478,9 +478,9 @@ function getCAAdminCredentials(){
  * @returns {Promise.<User>}
  */
 function _setClientCAAdminContext(client, orgID) {
-	var adminUser = getCAAdminCredentials();
-  var username = adminUser.username;
-  var password = adminUser.password;
+	const adminUser = getCAAdminCredentials();
+  const username = adminUser.username;
+  const password = adminUser.password;
 
 	return hfc.newDefaultKeyValueStore({
 		path: getKeyStoreForOrg(username, orgID)
@@ -558,7 +558,7 @@ function _setClientContextFromCA(client, username, orgID) {
           logger.info('No member "%s" in persistence', username);
 
           let caService = getCAService(orgID);
-          var enrollmentSecret = null;
+          let enrollmentSecret = null;
           return getCAAdminUser(orgID)
             .then(function(adminUserObj) {
               return caService.register({
@@ -597,7 +597,7 @@ function _setClientContextFromCA(client, username, orgID) {
 	})
   .catch(function(err) {
     logger.error('Failed to get registered user: %s, error:', username, err && err.message || err);
-    var errData = _extractEnrolmentError(err.message || err);
+    const errData = _extractEnrolmentError(err.message || err);
     if(errData.code === 0){ // assume code "0" can be on "already registered" error
       // User is already registered, but we cannot find the private key for it.
       // It seems that we lost access forever
@@ -626,7 +626,7 @@ function _setClientContextFromCA(client, username, orgID) {
  */
 function isAdmin(username){
   // TODO: here we should check whether we has certificate for the user in artifacts
-  var adminUser = getCAAdminCredentials();
+  const adminUser = getCAAdminCredentials();
   return adminUser.username === username;
 }
 
@@ -638,7 +638,7 @@ function isAdmin(username){
  */
 function _setClientContextFromFile(client, /*username, */ orgID) {
 
-  var username = 'peer'+orgID+'Admin'; // TODO:
+  const username = 'peer'+orgID+'Admin'; // TODO:
 
   return hfc.newDefaultKeyValueStore({
     path: getKeyStoreForOrg(username, orgID)
@@ -647,11 +647,11 @@ function _setClientContextFromFile(client, /*username, */ orgID) {
 
       // admin certificates
       // TODO: explicitly set files
-      var adminCerificates = ORGS[orgID].admin;
-      var keyPath = path.join(CONFIG_DIR, adminCerificates.key);
-      var keyPEM = Buffer.from(readAllFiles(keyPath)[0]).toString();
-      var certPath = path.join(CONFIG_DIR, adminCerificates.cert);
-      var certPEM = readAllFiles(certPath)[0].toString();
+      const adminCerificates = ORGS[orgID].admin;
+      const keyPath = path.join(CONFIG_DIR, adminCerificates.key);
+      const keyPEM = Buffer.from(readAllFiles(keyPath)[0]).toString();
+      const certPath = path.join(CONFIG_DIR, adminCerificates.cert);
+      const certPEM = readAllFiles(certPath)[0].toString();
 
 
       // also call 'setUserContext()' inside
@@ -678,9 +678,9 @@ function _setClientContextFromFile(client, /*username, */ orgID) {
  * @private
  */
 function _extractEnrolmentError(errorString){
-  var m = (''+errorString).match(/\[\[(.*)\]\]/);
+  const m = (''+errorString).match(/\[\[(.*)\]\]/);
   if(m){
-    var data;
+    let data;
     try{
       data = JSON.parse(m[1]);
     }catch(e){
@@ -694,20 +694,20 @@ function _extractEnrolmentError(errorString){
 
 
 
-var setupChaincodeDeploy = function() {
+const setupChaincodeDeploy = function() {
 	process.env.GOPATH = path.join(CONFIG_DIR, config.GOPATH);
 };
 
-var getLogger = function(moduleName) {
-	var logger = log4js.getLogger(moduleName);
+const getLogger = function(moduleName) {
+	const logger = log4js.getLogger(moduleName);
 	logger.setLevel('DEBUG');
 	return logger;
 };
 
-var getPeerAddressByName = function(org, peer) {
+const getPeerAddressByName = function(org, peer) {
 	// console.log(ORGS);
 	// console.log(org, peer);
-	var address = ORGS[org][peer].requests;
+	const address = ORGS[org][peer].requests;
 	return address.split('grpcs://')[1];
 };
 

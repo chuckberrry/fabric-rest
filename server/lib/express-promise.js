@@ -1,6 +1,7 @@
 /**
  * Created by maksim on 7/13/17.
  */
+/*eslint no-console:0*/
 "use strict";
 
 /**
@@ -51,6 +52,6 @@ function reportErrorDefault(err, req, res){
     console.error('Request failed: %s %s:', req.method.toUpperCase(), req.url, message );
     console.error(err);
     if(err.stack){
-        console.error(err.stack);
+      console.error(err.stack);
     }
 }

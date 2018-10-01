@@ -2,10 +2,10 @@
 
 const RELPATH = '/../'; // relative path to server root. Change it during file movement
 
-var path    = require('path');
-var express = require('express');
-var expressEnv      = require('../lib/express-env-middleware');
-var expressPromise  = require('../lib/express-promise');
+const path    = require('path');
+const express = require('express');
+const expressEnv      = require('../lib/express-env-middleware');
+const expressPromise  = require('../lib/express-promise');
 
 
 module.exports = function(rootFolder, clientEnv){
@@ -16,7 +16,7 @@ module.exports = function(rootFolder, clientEnv){
     rootFolder = path.join(__dirname, RELPATH, rootFolder);
   }
 
-  var app = express();
+  const app = express();
   app.use(expressPromise());
 
   // console.log('The following config will be exposed to client as env.js: ', clientEnv);
@@ -24,7 +24,7 @@ module.exports = function(rootFolder, clientEnv){
   app.use( express.static(rootFolder, { index: 'index.html'}) );
 
   // at last - send 404
-  app.use(function(req, res, next) { // jshint ignore:line
+  app.use(function(req, res) {
     res.status(404).end('Not Found');
   });
 

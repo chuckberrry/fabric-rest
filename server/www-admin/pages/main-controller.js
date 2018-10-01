@@ -2,7 +2,7 @@
  * @class MainController
  * @ngInject
  */
-function MainController($scope, UserService, $state, ApiService) {
+function MainController(UserService, $state) {
   var ctrl = this;
 
   ctrl.$state = $state;

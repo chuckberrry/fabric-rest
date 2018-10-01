@@ -2,7 +2,7 @@
  * @class LoginController
  * @ngInject
  */
-function LoginController($scope, UserService, $state, ApiService) {
+function LoginController(UserService, $state) {
   var ctl = this;
 
   ctl.config = null;

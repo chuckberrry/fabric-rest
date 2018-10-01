@@ -1,8 +1,8 @@
 'use strict';
-var util = require('util');
-var EventEmitter = require('events');
-var helper = require('./helper.js');
-var logger = helper.getLogger('peer-listener');
+const util = require('util');
+const EventEmitter = require('events');
+const helper = require('./helper.js');
+const logger = helper.getLogger('peer-listener');
 
 EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
 ///////////////////////////////////////////////
@@ -16,44 +16,44 @@ const blockEvents = new EventEmitter();
  * Event listener can change listening peers based on some criteria
  * @type {Array<string>} array of peer url
  */
-var peers = [];
+let peers = [];
 
 /**
  * current peer index
  * @type {number}
  */
-var index = 0;
+let index = 0;
 
 /**
  * Current event hub
  * @type {EventHub}
  */
-var eventhub = null;
+let eventhub = null;
 
 
 /**
  * @type {string}
  */
-var _username = null;
+let _username = null;
 /**
  * @type {string} organisation ID (json key for organisation in  network-config)
  */
-var orgID = null;
+let orgID = null;
 
 
 /**
  * @type {Promise}
  */
-var initPromise = null;
+let initPromise = null;
 
 /**
  * This flag indicates that at leas one success connection with fabric1.0 was made.
  * Application tries to reconnect in this case. Otherwise it terminates, and that is an indicator of bad configuration.
  * @type {boolean}
  */
-var _wasConnectedAtStartup = false;
+let _wasConnectedAtStartup = false;
 
-var RETRY_ATTEMPTS = 5;
+const RETRY_ATTEMPTS = 5;
 
 /**
  * @param {Array<string>} peersUrls
@@ -99,7 +99,7 @@ function listen(){
 
     //
     function _connect(){
-      var peer = rotatePeers();
+      const peer = rotatePeers();
       logger.info('connecting to %s', peer);
 
       // set the transaction listener
@@ -119,7 +119,7 @@ function listen(){
 
     //
     function _checkConnection(){
-      var eh = this; //jshint ignore:line
+      const eh = this;
       if(eh._connected){
         clearInterval(eh._connectTimer);
         eh._connectTimer = null;

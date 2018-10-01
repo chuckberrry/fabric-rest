@@ -305,7 +305,7 @@ angular.module('nsd.app',[
      */
     function getHost(address){
       //                             1111       222222
-      var m = (address||'').match(/^(\w+:)?\/\/([^\/]+)/) || [];
+      var m = (address||'').match(/^(\w+:)?\/\/([^/]+)/) || [];
       return m[2];
     }
 

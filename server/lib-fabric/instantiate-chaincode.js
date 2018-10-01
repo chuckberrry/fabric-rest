@@ -14,25 +14,25 @@
  *  limitations under the License.
  */
 'use strict';
-var path = require('path');
-var fs = require('fs');
-var util = require('util');
-var config = require('../config.json');
-var helper = require('./helper.js');
-var logger = helper.getLogger('instantiate-chaincode');
-var hfc = require('./hfc');
-var ORGS = hfc.getConfigSetting('network-config');
-var CONFIG_DIR = hfc.getConfigSetting('config-dir');
-var tx_id = null;
-var eh = null;
+const path = require('path');
+const fs = require('fs');
+const util = require('util');
+const config = require('../config.json');
+const helper = require('./helper.js');
+const logger = helper.getLogger('instantiate-chaincode');
+const hfc = require('./hfc');
+const ORGS = hfc.getConfigSetting('network-config');
+const CONFIG_DIR = hfc.getConfigSetting('config-dir');
+let tx_id = null;
+let eh = null;
 
 
 // must be called with admin credentials
-var instantiateChaincode = function(channelID, chaincodeName, chaincodeVersion, functionName, args, username, org) {
+const instantiateChaincode = function(channelID, chaincodeName, chaincodeVersion, functionName, args, username, org) {
 	logger.debug('\n============ Instantiate chaincode on organization ' + org + ' ============\n');
 
-  var channel;
-  var client;
+  let channel;
+  let client;
   return helper.getChannelForOrg(channelID, username, org)
     .then(_channel=>{
         channel = _channel;
@@ -48,7 +48,7 @@ var instantiateChaincode = function(channelID, chaincodeName, chaincodeVersion, 
     }).then((/*success*/) => {
         tx_id = client.newTransactionID();
         // send proposal to endorser
-        var request = {
+        const request = {
             chaincodeId: chaincodeName,
             chaincodeVersion: chaincodeVersion,
             fcn: functionName,
@@ -61,20 +61,18 @@ var instantiateChaincode = function(channelID, chaincodeName, chaincodeVersion, 
         err = err || new Error('Failed to initialize the channel');
         throw err;
     }).then((results) => {
-        var proposalResponses = results[0];
-        var proposal = results[1];
-        var all_good = true;
-        for (var i in proposalResponses) { // jshint ignore:line
-            let one_good = false;
-            if (proposalResponses && proposalResponses[0].response &&
-                proposalResponses[0].response.status === 200) {
-                one_good = true;
-                logger.info('instantiate proposal was good');
-            } else {
-                logger.error('instantiate proposal was bad');
-            }
-            all_good = all_good & one_good; // jshint ignore: line
+        const proposalResponses = results[0];
+        const proposal = results[1];
+        let all_good = true;
+        let one_good = false;
+        if (proposalResponses && proposalResponses[0].response &&
+            proposalResponses[0].response.status === 200) {
+            one_good = true;
+            logger.info('instantiate proposal was good');
+        } else {
+            logger.error('instantiate proposal was bad');
         }
+        all_good = all_good & one_good;
         if (all_good) {
             logger.info(util.format(
                 'Successfully sent Proposal and received ProposalResponse: Status - %s, message - "%s", metadata - "%s", endorsement signature: %s',
@@ -83,14 +81,14 @@ var instantiateChaincode = function(channelID, chaincodeName, chaincodeVersion, 
                 proposalResponses[0].response.payload, // TODO: this made some trash in console
                 proposalResponses[0].endorsement.signature // TODO: .. as well as this
             ));
-            var request = {
+            const request = {
                 proposalResponses: proposalResponses,
                 proposal: proposal
             };
             // set the transaction listener and set a timeout of 30sec
             // if the transaction did not get committed within the timeout period,
             // fail the test
-            var deployId = tx_id.getTransactionID();
+            const deployId = tx_id.getTransactionID();
 
             eh = client.newEventHub();
             let data = fs.readFileSync(path.join(CONFIG_DIR, ORGS[org]['peer1']['tls_cacerts']));
@@ -122,7 +120,7 @@ var instantiateChaincode = function(channelID, chaincodeName, chaincodeVersion, 
                 });
             });
 
-            var sendPromise = channel.sendTransaction(request);
+            const sendPromise = channel.sendTransaction(request);
             return Promise.all([sendPromise].concat([txPromise])).then((results) => {
                 logger.debug('Event promise all complete and testing complete');
                 return results[0]; // the first returned value is from the 'sendPromise' which is from the 'sendTransaction()' call

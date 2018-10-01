@@ -3,37 +3,37 @@
  */
 'use strict';
 const RELPATH = '/../'; // relative path to server root. Change it during file movement
-var util = require('util');
-var path = require('path');
+const util = require('util');
+const path = require('path');
 
-var log4js = require('log4js');
-var logger = log4js.getLogger('WebApp');
+const log4js = require('log4js');
+const logger = log4js.getLogger('WebApp');
 
-var express         = require('express');
-// var session      = require('express-session');
-// var cookieParser = require('cookie-parser');
-var bodyParser      = require('body-parser');
-var expressJWT      = require('express-jwt');
-var cors            = require('cors');
-var bearerToken     = require('express-bearer-token');
-var expressPromise  = require('../lib/express-promise');
-var expressEnv      = require('../lib/express-env-middleware');
+const express         = require('express');
+// const session      = require('express-session');
+// const cookieParser = require('cookie-parser');
+const bodyParser      = require('body-parser');
+const expressJWT      = require('express-jwt');
+const cors            = require('cors');
+const bearerToken     = require('express-bearer-token');
+const expressPromise  = require('../lib/express-promise');
+const expressEnv      = require('../lib/express-env-middleware');
 
-var jwt   = require('jsonwebtoken');
-var tools = require('../lib/tools');
-var hfc   = require('../lib-fabric/hfc');
-var networkConfig = hfc.getConfigSetting('network-config');
+const jwt   = require('jsonwebtoken');
+const tools = require('../lib/tools');
+const hfc   = require('../lib-fabric/hfc');
+const networkConfig = hfc.getConfigSetting('network-config');
 
-var helper        = require('../lib-fabric/helper.js');
-var createChannel = require('../lib-fabric/create-channel.js');
-var joinChannel   = require('../lib-fabric/join-channel.js');
-var install       = require('../lib-fabric/install-chaincode.js');
-var instantiate   = require('../lib-fabric/instantiate-chaincode.js');
-var invoke        = require('../lib-fabric/invoke-transaction.js');
-var query         = require('../lib-fabric/query.js');
+const helper        = require('../lib-fabric/helper.js');
+const createChannel = require('../lib-fabric/create-channel.js');
+const joinChannel   = require('../lib-fabric/join-channel.js');
+const install       = require('../lib-fabric/install-chaincode.js');
+const instantiate   = require('../lib-fabric/instantiate-chaincode.js');
+const invoke        = require('../lib-fabric/invoke-transaction.js');
+const query         = require('../lib-fabric/query.js');
 
-var config = require('../config.json');
-var packageInfo = require('../package.json');
+const config = require('../config.json');
+const packageInfo = require('../package.json');
 
 const ORG = process.env.ORG;
 const USERNAME = config.user.username;
@@ -49,10 +49,10 @@ if(!ORG){
 }
 
 
-var app = express(); // root app
+const app = express(); // root app
 // custom middleware: use res.promise() to send promise response
 app.use(expressPromise());
-var adminPartyApp = express();
+const adminPartyApp = express();
 adminPartyApp.use(expressPromise());
 
 
@@ -84,7 +84,7 @@ if(config.admin_party) {
 // set secret variable
 app.set('secret', config.jwt_secret);
 
-var pathExcluded = ['/config', '/config.js', '/socket.io', '/genesis'];
+const pathExcluded = ['/config', '/config.js', '/socket.io', '/genesis'];
 app.use(expressJWT({
     secret: config.jwt_secret
 }).unless({
@@ -98,7 +98,7 @@ app.use(bearerToken());
 // replace Buffer with Buffer value recursively in the response object
 app.use(function(req,res,next){
     // replace res.send()
-    var originalSend = res.send;
+    const originalSend = res.send;
 
     res.send = function(data){
         if(!res._binary) {
@@ -117,7 +117,7 @@ app.use(function(req, res, next) {
         return next();
     }
 
-    var token = req.token;
+    const token = req.token;
     jwt.verify(token, app.get('secret'), function(err, decoded) {
         if (err) {
             res.error('Failed to authenticate token. Make sure to include the ' +
@@ -155,7 +155,7 @@ app.post('/token', function(req, res) {
 // (admin party) Register and enroll user
 adminPartyApp.post('/users', function(req, res) {
     logger.info('**************** ENROLL USER ****************');
-    var username = req.body.username;
+    const username = req.body.username;
 
     logger.debug('End point : /users');
     logger.debug('User name : ' + username);
@@ -201,8 +201,8 @@ adminPartyApp.post('/users', function(req, res) {
 adminPartyApp.post('/channels', function(req, res) {
     logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');
     logger.debug('End point : /channels');
-    var chaincodeName     = req.body.channelName;
-    var channelConfigPath = req.body.channelConfigPath;
+    const chaincodeName     = req.body.channelName;
+    const channelConfigPath = req.body.channelConfigPath;
 
     logger.debug('Channel ID : ' + chaincodeName);
     logger.debug('channelConfigPath : ' + channelConfigPath);
@@ -225,9 +225,9 @@ adminPartyApp.post('/channels', function(req, res) {
 // (admin party) Join Channel
 adminPartyApp.post('/channels/:channelName/peers', function(req, res) {
     logger.info('<<<<<<<<<<<<<<<<< J O I N  C H A N N E L >>>>>>>>>>>>>>>>>');
-    var chaincodeName = req.params.channelName;
-    var peersId = req.body.peers || [];
-    var peers   = peersId.map(getPeerHostByCompositeID);
+    const chaincodeName = req.params.channelName;
+    const peersId = req.body.peers || [];
+    const peers   = peersId.map(getPeerHostByCompositeID);
     logger.debug('channelName : ' + chaincodeName);
     logger.debug('peers : ' + peers);
 
@@ -250,11 +250,11 @@ adminPartyApp.post('/channels/:channelName/peers', function(req, res) {
 adminPartyApp.post('/chaincodes', function(req, res) {
     logger.debug('==================== INSTALL CHAINCODE ==================');
 
-    var chaincodeName = req.body.chaincodeName;
-    var chaincodePath = req.body.chaincodePath;
-    var chaincodeVersion = req.body.chaincodeVersion;
-    var peersId = req.body.peers || [];
-    var peers   = peersId.map(getPeerHostByCompositeID);
+    const chaincodeName = req.body.chaincodeName;
+    const chaincodePath = req.body.chaincodePath;
+    const chaincodeVersion = req.body.chaincodeVersion;
+    const peersId = req.body.peers || [];
+    const peers   = peersId.map(getPeerHostByCompositeID);
 
     logger.debug('peers : ' + peers); // target peers list
     logger.debug('chaincodeName : ' + chaincodeName);
@@ -286,11 +286,11 @@ adminPartyApp.post('/chaincodes', function(req, res) {
 // (admin party) Instantiate chaincode on target peers
 adminPartyApp.post('/channels/:channelName/chaincodes', function(req, res) {
     logger.debug('==================== INSTANTIATE CHAINCODE ==================');
-    var chaincodeName    = req.body.chaincodeName;
-    var chaincodeVersion = req.body.chaincodeVersion;
-    var functionName = req.body.functionName;
-    var channelName  = req.params.channelName;
-    var args = req.body.args;
+    const chaincodeName    = req.body.chaincodeName;
+    const chaincodeVersion = req.body.chaincodeVersion;
+    const functionName = req.body.functionName;
+    const channelName  = req.params.channelName;
+    const args = req.body.args;
 
     logger.debug('channelName  : ' + channelName);
     logger.debug('chaincodeName : ' + chaincodeName);
@@ -325,7 +325,7 @@ adminPartyApp.post('/channels/:channelName/chaincodes', function(req, res) {
 ///////////////////////// REGULAR REST ENDPOINTS START HERE ///////////////////////////
 
 // get public config
-var clientConfig = hfc.getConfigSetting('config');
+const clientConfig = hfc.getConfigSetting('config');
 clientConfig.org = ORG;
 
 app.get('/config.js', expressEnv('__config', clientConfig));
@@ -350,7 +350,7 @@ app.get('/genesis', function(req, res) {
 app.get('/channels', function(req, res) {
   logger.debug('================ GET CHANNELS ======================');
   logger.debug('peer: ' + req.query.peer);
-  var peer = req.query.peer;
+  const peer = req.query.peer;
 
   if (!peer) {
     res.error(getErrorMessage("'peer'"));
@@ -387,7 +387,7 @@ app.get('/channels/:channelName/config', function(req, res) {
   logger.debug('channelName : ' + req.params.channelName);
 
   // let channelName = req.params.channelName;
-  var channelFile = req.params.channelName + '.tx';
+  const channelFile = req.params.channelName + '.tx';
 
   res._binary = true; // prevents base64 buffer encoding
   res.promise(
@@ -400,13 +400,13 @@ app.get('/channels/:channelName/config', function(req, res) {
 // Invoke transaction on chaincode on target peers
 app.post('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
     logger.debug('==================== INVOKE ON CHAINCODE ==================');
-    var chaincodeName = req.params.chaincodeName;
-    var channelName   = req.params.channelName;
-    var peersId       = req.body.peers || [];
-    var peers = peersId.map(getPeerHostByCompositeID);
+    const chaincodeName = req.params.chaincodeName;
+    const channelName   = req.params.channelName;
+    const peersId       = req.body.peers || [];
+    const peers = peersId.map(getPeerHostByCompositeID);
 
-    var fcn = req.body.fcn;
-    var args = req.body.args;
+    const fcn = req.body.fcn;
+    const args = req.body.args;
     logger.debug('channelName  : ' + channelName);
     logger.debug('chaincodeName : ' + chaincodeName);
     logger.debug('peersId  : ', JSON.stringify(peersId) );
@@ -442,12 +442,12 @@ app.post('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) 
 // Query on chaincode on target peers
 app.get('/channels/:channelName/chaincodes/:chaincodeName', function(req, res) {
     logger.debug('==================== QUERY BY CHAINCODE ==================');
-    var channelName   = req.params.channelName;
-    var chaincodeName = req.params.chaincodeName;
+    const channelName   = req.params.channelName;
+    const chaincodeName = req.params.chaincodeName;
     let args = req.query.args;
     let fcn  = req.query.fcn;
     let peerId = req.query.peer;
-    var peerInfo = getPeerInfoByCompositeID(peerId);
+    const peerInfo = getPeerInfoByCompositeID(peerId);
 
     logger.debug('channelName : ' + channelName);
     logger.debug('chaincodeName : ' + chaincodeName);
@@ -586,7 +586,7 @@ app.get('/chaincodes', function(req, res) {
 
 
 // at last - report any error =)
-app.use(function(err, req, res, next) { // jshint ignore:line
+app.use(function(err, req, res) {
     res.error(err);
 });
 
@@ -603,8 +603,8 @@ function getErrorMessage(field) {
  * @returns {string}
  */
 function getPeerHostByCompositeID(orgPeerID){
-  var parts = orgPeerID.split('/');
-  var peer = networkConfig[parts[0]][parts[1]] || {};
+  const parts = orgPeerID.split('/');
+  const peer = networkConfig[parts[0]][parts[1]] || {};
   return tools.getHost(peer.requests);
 }
 /**
@@ -614,6 +614,6 @@ function getPeerHostByCompositeID(orgPeerID){
  * @returns {{peer:string, org:string}}
  */
 function getPeerInfoByCompositeID(orgPeerID){
-  var parts = orgPeerID.split('/');
+  const parts = orgPeerID.split('/');
   return parts ? {peer: parts[1], org: parts[0]} : null;
 }

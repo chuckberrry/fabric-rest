@@ -95,6 +95,7 @@ angular.module('nsd.directive.certificate', [])
         /**
          * @return {Array<{key:ans1Object, value:ansobject}>}
          */
+        /*eslint no-unused-vars:0*/
         function getAllObjectIdentifiers(asn1DecodedObject){
           var elements = _extractOI(asn1DecodedObject);
 

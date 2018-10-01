@@ -2,16 +2,16 @@
  * Created by maksim on 7/18/17.
  */
 "use strict";
-var log4js = require('log4js');
-var logger = log4js.getLogger('Socket');
-var peerListener = require('../lib-fabric/peer-listener.js');
-var tools = require('../lib/tools');
+const log4js = require('log4js');
+const logger = log4js.getLogger('Socket');
+const peerListener = require('../lib-fabric/peer-listener.js');
+const tools = require('../lib/tools');
 
-var hfc = require('../lib-fabric/hfc');
-var networkConfig = hfc.getConfigSetting('network-config');
+const hfc = require('../lib-fabric/hfc');
+const networkConfig = hfc.getConfigSetting('network-config');
 
 // config
-var config = require('../config.json');
+const config = require('../config.json');
 const USERNAME = config.user.username;
 
 module.exports = {
@@ -23,15 +23,15 @@ module.exports = {
  * @param {object} options
  */
 function init(io, options){
-  var ORG = options.org;
+  const ORG = options.org;
 
-  var orgConfig = networkConfig[ORG];
+  const orgConfig = networkConfig[ORG];
   if(!orgConfig){
     throw new Error('No such organisation in config: '+ORG);
   }
 
-  var PEERS = Object.keys(orgConfig).filter(k=>k.startsWith('peer'));
-  var peersAddress = PEERS.map(p=>tools.getHost(networkConfig[ORG][p].requests));
+  const PEERS = Object.keys(orgConfig).filter(k=>k.startsWith('peer'));
+  const peersAddress = PEERS.map(p=>tools.getHost(networkConfig[ORG][p].requests));
 
   // log connections
   io.on('connection', function(socket){
@@ -41,13 +41,9 @@ function init(io, options){
     });
   });
 
-  // emit block appearance
-  var lastBlock = null;
   //TODO: listen all peers, remove duplicates
   peerListener.init([peersAddress[0]], USERNAME, ORG);
   peerListener.registerBlockEvent(function(block){
-    // emit globally
-    lastBlock = block;
     io.emit('chainblock', block);
   });
 

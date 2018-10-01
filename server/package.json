@@ -17,7 +17,7 @@
     "dev": "CONFIG_FILE=\"../artifacts-dev/network-config.json\" npm -s start",
     "preset": "CONFIG_FILE=\"../artifacts-preset/network-config-local.json\" npm -s start",
     "test": "export CONFIG_FILE=test/resources/network-config.json && mocha",
-    "lint": "jshint ."
+    "lint": "eslint ."
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -28,15 +28,15 @@
     "express-bearer-token": "^2.1.1",
     "express-jwt": "^5.3.0",
     "express-session": "^1.15.6",
-    "fabric-ca-client": "^1.2.1",
-    "fabric-client": "^1.2.1",
+    "fabric-ca-client": "^1.2.2",
+    "fabric-client": "^1.2.2",
     "fs-extra": "^2.0.0",
-    "jsonwebtoken": "^7.3.0",
+    "jsonwebtoken": "^8.3.0",
     "log4js": "^0.6.38",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
-    "jshint": "^2.9.6",
+    "eslint": "^5.6.0",
     "mocha": "^5.2.0"
   }
 }
