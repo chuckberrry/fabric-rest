@@ -1,7 +1,7 @@
 'use strict';
 
-var log4js  = require('log4js');
-var logger  = log4js.getLogger('API');
+const log4js  = require('log4js');
+const logger  = log4js.getLogger('API');
 
 module.exports = function(){
   return function(req, res, next) {

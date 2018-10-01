@@ -14,25 +14,24 @@
  *  limitations under the License.
  */
 "use strict";
-var util = require('util'); // jshint ignore:line
-var fs = require('fs');
-var path = require('path');
-var helper = require('./helper.js');
-var logger = helper.getLogger('Create-Channel');
+const fs = require('fs');
+const path = require('path');
+const helper = require('./helper.js');
+const logger = helper.getLogger('Create-Channel');
 
 
 //Attempt to send a request to the orderer with the sendCreateChain method
-var createChannel = function(channelID, channelConfigPath, username, org) {
+const createChannel = function(channelID, channelConfigPath, username, org) {
 	logger.debug('\n====== Creating Channel \'' + channelID + '\' ======\n');
 
 	return helper.getChannelForOrg(channelID, username, org)
 		.then(channel=>{
-			var client = channel.getClient();
+			const client = channel.getClient();
 
 			// read in the envelope for the channel config raw bytes
-			var envelope = fs.readFileSync(path.join(__dirname, channelConfigPath));
+			const envelope = fs.readFileSync(path.join(__dirname, channelConfigPath));
 			// extract the channel config bytes from the envelope to be signed
-			var channelConfig = client.extractChannelConfig(envelope);
+			const channelConfig = client.extractChannelConfig(envelope);
 
 
 			// sign the channel config bytes as "endorsement", this is required by

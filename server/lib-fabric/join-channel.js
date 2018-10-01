@@ -14,28 +14,28 @@
  *  limitations under the License.
  */
 "use strict";
-var util = require('util');
-var path = require('path');
-var fs = require('fs');
+const util = require('util');
+const path = require('path');
+const fs = require('fs');
 
-var tx_id = null;
-var config = require('../config.json');
-var helper = require('./helper.js');
-var logger = helper.getLogger('Join-Channel');
-var ORGS = helper.ORGS;
-var CONFIG_DIR = helper.CONFIG_DIR;
-var allEventhubs = [];
+let tx_id = null;
+const config = require('../config.json');
+const helper = require('./helper.js');
+const logger = helper.getLogger('Join-Channel');
+const ORGS = helper.ORGS;
+const CONFIG_DIR = helper.CONFIG_DIR;
+const allEventhubs = [];
 
 // on process exit, always disconnect the event hub
-var closeConnections = function(isSuccess) {
+const closeConnections = function(isSuccess) {
     if (isSuccess) {
         logger.debug('\n============ Join Channel is SUCCESS ============\n');
     } else {
         logger.debug('\n!!!!!!!! ERROR: Join Channel FAILED !!!!!!!!\n');
     }
     logger.debug('');
-    for (var key in allEventhubs) {
-        var eventhub = allEventhubs[key];
+    for (const key in allEventhubs) {
+        const eventhub = allEventhubs[key];
         if (eventhub && eventhub.isconnected()) {
             //logger.debug('Disconnecting the event hub');
             eventhub.disconnect();
@@ -47,13 +47,13 @@ var closeConnections = function(isSuccess) {
 // Attempt to send a request to the orderer with the sendCreateChain method
 // Should be called by admin
 //
-var joinChannel = function(peers, channelID, username, org) {
+const joinChannel = function(peers, channelID, username, org) {
 	//logger.debug('\n============ Join Channel ============\n')
 	logger.info(util.format('Calling peers in organization "%s" to join the channel', org));
 
-	var eventhubs = [];
-  var client;
-  var channel;
+	const eventhubs = [];
+  let client;
+  let channel;
 
 	return helper.getChannelForOrg(channelID, username, org)
 		.then(_channel=>{
@@ -69,7 +69,7 @@ var joinChannel = function(peers, channelID, username, org) {
 			return channel.getGenesisBlock(request);
 		}).then((genesis_block) => {
 			tx_id = client.newTransactionID();
-			var request = {
+			const request = {
 				targets: helper.newPeers(peers),
 				txId: tx_id,
 				block: genesis_block
@@ -91,7 +91,7 @@ var joinChannel = function(peers, channelID, username, org) {
 				}
 			}
 
-			var eventPromises = [];
+			const eventPromises = [];
 			eventhubs.forEach((eh) => {
 				let txPromise = new Promise((resolve, reject) => {
 
@@ -106,7 +106,7 @@ var joinChannel = function(peers, channelID, username, org) {
 						// TODO: we must check that this block came from the channel we asked the peer to join
 						if (block.data.data.length === 1) {
 							// Config block must only contain one transaction
-							var channel_header = block.data.data[0].payload.header.channel_header;
+							const channel_header = block.data.data[0].payload.header.channel_header;
 							if (channel_header.channel_id === channelID) {
 								resolve();
 							} else {
@@ -123,16 +123,15 @@ var joinChannel = function(peers, channelID, username, org) {
 			return Promise.all([sendPromise].concat(eventPromises));
 		}).then((results) => {
 			logger.debug(util.format('Join Channel R E S P O N S E : %j', results));
-			if (results[0] && results[0][0] && results[0][0].response && results[0][0].response.status == 200) {
+			if (results[0] && results[0][0] && results[0][0].response && results[0][0].response.status === 200) {
 
 				logger.info(util.format('Successfully joined peers in organization %s to the channel \'%s\'', org, channelID));
 				closeConnections(true);
 
-				let response = {
-					success: true,
-					message: util.format('Successfully joined peers in organization %s to the channel \'%s\'', org, channelID)
-				};
-				return response;
+				return {
+          success: true,
+          message: util.format('Successfully joined peers in organization %s to the channel \'%s\'', org, channelID)
+        };
 			} else {
 				logger.error(' Failed to join channel');
 				closeConnections();

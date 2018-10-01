@@ -33,16 +33,16 @@ function loadMiddlewares(app, configFile){
     return;
   }
 
-  var config = JSON.parse(fs.readFileSync(configFile).toString());
-  var middlewareArr = config.middleware || [];
+  const config = JSON.parse(fs.readFileSync(configFile).toString());
+  const middlewareArr = config.middleware || [];
 
   for(let i=0, n=middlewareArr.length; i<=n-1; i++){
-    var moduleInfo = middlewareArr[i];
+    const moduleInfo = middlewareArr[i];
 
-    var name  = moduleInfo.name;
-    // var mount = moduleInfo.mount;
-    var file  = moduleInfo.file;
-    // var args  = moduleInfo.args || [];
+    const name  = moduleInfo.name;
+    // const mount = moduleInfo.mount;
+    let file  = moduleInfo.file;
+    // const args  = moduleInfo.args || [];
 
     // make path relative to config file
     if(!path.isAbsolute(file)){

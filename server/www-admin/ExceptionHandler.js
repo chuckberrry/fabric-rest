@@ -11,7 +11,7 @@
 // https://developer.mozilla.org/en/docs/Web/API/GlobalEventHandlers/onerror
 
 // propagate all uncaught errors to our handler
-window.onerror = function(msg, url, line, colno, error) {
+window.onerror = function(msg, url, line, colno/*, error*/) {
   // this variant shows syntax error with the error source
   _processError(/*error ||*/ new Error(msg + '\n' + url + ':' + line + (colno ? ':'+colno : '') ));
   return true; // When the function returns true, this prevents the firing of the default event handler.

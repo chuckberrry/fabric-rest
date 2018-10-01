@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 'use strict';
-var util = require('util');
-var helper = require('./helper.js');
-var logger = helper.getLogger('install-chaincode');
+const util = require('util');
+const helper = require('./helper.js');
+const logger = helper.getLogger('install-chaincode');
 
 
 // we must pass here admin user
@@ -25,7 +25,7 @@ function installChaincode(peers, chaincodeName, chaincodePath, chaincodeVersion,
   helper.setupChaincodeDeploy();
   return helper.getClientForOrg(username, org)
     .then(client=>{
-			var request = {
+			const request = {
 				targets: helper.newPeers(peers),
 				chaincodePath: chaincodePath,
 				chaincodeId: chaincodeName,
@@ -36,20 +36,19 @@ function installChaincode(peers, chaincodeName, chaincodePath, chaincodeVersion,
 			logger.error('Failed to enroll user \'' + username + '\'. ' + err);
 			throw new Error('Failed to enroll user \'' + username + '\'. ' + err);
 		}).then((results) => {
-			var proposalResponses = results[0];
-			// var proposal = results[1];
-			var all_good = true;
-			for (var i in proposalResponses) { // jshint ignore:line
-				let one_good = false;
-				if (proposalResponses && proposalResponses[0].response &&
-					proposalResponses[0].response.status === 200) {
-					one_good = true;
-					logger.info('install proposal was good');
-				} else {
-					logger.error('install proposal was bad');
-				}
-				all_good = all_good & one_good; // jshint ignore:line
-			}
+			const proposalResponses = results[0];
+			// const proposal = results[1];
+			let all_good = true;
+      let one_good = false;
+      if (proposalResponses && proposalResponses[0].response &&
+        proposalResponses[0].response.status === 200) {
+        one_good = true;
+        logger.info('install proposal was good');
+      } else {
+        logger.error('install proposal was bad');
+      }
+      all_good = all_good & one_good;
+
 			if (all_good) {
 				logger.info(util.format('Successfully sent install Proposal and received ProposalResponse: Status - %s', proposalResponses[0].response.status));
 				logger.debug('\nSuccessfully Installed chaincode on organization ' + org + '\n');

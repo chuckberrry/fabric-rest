@@ -21,6 +21,21 @@ The server connects to the organization's CA server to get certs for end users a
 to blockchain peers. User requests coming from a web app authenticate with a Bearer JWT token for which the server 
 finds a corresponding key cached locally and signs user transactions with it when it passes them to peers.
 
+To enable pre-auth feature, please add `index.js` file to `server/middleware-auth` folder. Example can be found below:
+```js
+//3rd-party auth-store
+const credentials = [{
+  username: 'test',
+  password: undefined,
+  org: 'a'
+}];
+
+module.exports = function auth(username, password, orgname) {
+  const user = credentials.find(obj => obj.username === username && obj.org === orgname && obj.password === password);
+  return user ? Promise.resolve(user) : Promise.reject({status: 401, message: 'invalid credentials'});
+};
+```
+
 ### Events
 
 Block events coming from peers are sent to clients with a popular [socket.io](https://socket.io/) library to be consumed 

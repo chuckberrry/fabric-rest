@@ -10,7 +10,7 @@ function ChannelService(ApiService, $q) {
 
   /**
    */
-  ChannelService.list = function(user) {
+  ChannelService.list = function(/*user*/) {
     return ApiService.channels.list();
   };
 
