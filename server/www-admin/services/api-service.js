@@ -148,7 +148,8 @@ function ApiService($log, $http, env) {
     params = params || {};
     params.peer = params.peer || QUERY_PEER;
     return $http.get(cfg.api+'/chaincodes', {params:params})
-      .then(function(response){ return response.data.chaincodes; });
+      .then(function(response){ return response.data.chaincodes; })
+      .then(function (chaincodes) { return chaincodes.filter(function(cc) { return cc.version;});});
   };
 
 
