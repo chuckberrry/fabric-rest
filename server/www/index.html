@@ -98,7 +98,7 @@
           <a href="https://docs.docker.com/engine/reference/commandline/run/#mount-volume--v-read-only" target="_blank">docker volume</a>
           to mount your <u>web app</u> here or just put static files in <code>www</code> folder:
           <blockquote>
-            <code>docker run -v /path/to/your/app:/usr/src/app/www maxxx1313/fabric-rest</code>
+            <code>docker run -v /path/to/your/app:/usr/src/app/www dockeraltoros/fabric-rest</code>
           </blockquote>
         </li>
 
@@ -106,7 +106,7 @@
           <a href="https://docs.docker.com/engine/reference/commandline/run/#mount-volume--v-read-only" target="_blank">docker volume</a>
           to mount your <u>middleware</u> here or just put the files in <code>middleware</code> folder:
           <blockquote>
-            <code>docker run -v /path/to/your/middleware:/usr/src/app/middleware maxxx1313/fabric-rest</code>
+            <code>docker run -v /path/to/your/middleware:/usr/src/app/middleware dockeraltoros/fabric-rest</code>
           </blockquote>
           <p>
             The middleware is a function, which should return <a href="http://expressjs.com/en/guide/using-middleware.html" target="_blank">an express middleware</a>.
