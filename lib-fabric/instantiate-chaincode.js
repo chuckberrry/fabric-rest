@@ -14,15 +14,10 @@
  *  limitations under the License.
  */
 'use strict';
-const path = require('path');
-const fs = require('fs');
 const util = require('util');
 const config = require('../config.json');
 const helper = require('./helper.js');
 const logger = helper.getLogger('instantiate-chaincode');
-const hfc = require('./hfc');
-const ORGS = hfc.getConfigSetting('network-config');
-const CONFIG_DIR = hfc.getConfigSetting('config-dir');
 let tx_id = null;
 let eh = null;
 
@@ -90,12 +85,7 @@ const instantiateChaincode = function(channelID, chaincodeName, chaincodeVersion
             // fail the test
             const deployId = tx_id.getTransactionID();
 
-            eh = client.newEventHub();
-            let data = fs.readFileSync(path.join(CONFIG_DIR, ORGS[org]['peer1']['tls_cacerts']));
-            eh.setPeerAddr(ORGS[org]['peer1']['events'], {
-                pem: Buffer.from(data).toString(),
-                'ssl-target-name-override': ORGS[org]['peer1']['server-hostname']
-            });
+            eh = helper.newEventHub(channel, 'peer1', org);
             eh.connect();
 
             let txPromise = new Promise((resolve, reject) => {

@@ -22,7 +22,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const User = require('fabric-client/lib/User.js');
 const Peer = require('fabric-client/lib/Peer.js');
-const EventHub = require('fabric-client/lib/EventHub.js');
 const Orderer = require('fabric-client/lib/Orderer.js');
 const Channel = require('fabric-client/lib/Channel.js');
 
@@ -257,29 +256,6 @@ function newPeers(urls) {
   return targets;
 }
 
-// /**
-//  * @param {Array<url>} urls
-//  * @param {string} username
-//  * @param {string} org
-//  * @returns {Array<EventHub>}
-//  */
-// function newEventHubs(urls, username, org) {
-//   let targets = [];
-//   for (let index in urls) {
-//     if(!urls.hasOwnProperty(index)){ continue; }
-//     let peerUrl = urls[index];
-//
-//     try {
-//       let eh = newEventHub(peerUrl, username, org);
-//       targets.push(eh);
-//     }catch(e) {
-//       logger.error(e);
-//     }
-//   }
-//   return targets;
-// }
-//
-
 /**
  * @param {url} peerUrl
  * @param {string} [orgID]
@@ -338,29 +314,19 @@ function newPeer(peerUrl) {
 
 
 /**
+ * @param {Channel} channel
  * @param {url} peerUrl
- * @param {string} username
  * @param {string} orgID
- * @return {Promise<EventHub>}
+ * @return {Promise<ChannelEventHub>}
  */
-function newEventHub(peerUrl, username, orgID) {
+function newEventHub(channel, peerUrl, orgID) {
 
-  return getClientForOrg(username, orgID)
-    .then(client => {
-      const peerInfo = _getPeerInfoByUrl(peerUrl, orgID);
-      if (!peerInfo) {
-        throw new Error('Failed to find a peer matching the url: ' + peerUrl);
-      }
-      let data = fs.readFileSync(path.join(CONFIG_DIR, peerInfo['tls_cacerts']));
+  const peerInfo = _getPeerInfoByUrl(peerUrl, orgID);
+  if (!peerInfo) {
+    throw new Error('Failed to find a peer matching the url: ' + peerUrl);
+  }
 
-      //
-      let eventHub = new EventHub(client);
-      eventHub.setPeerAddr(peerInfo['events'], {
-        pem: Buffer.from(data).toString(),
-        'ssl-target-name-override': peerInfo['server-hostname']
-      });
-      return eventHub;
-    });
+  return channel.newChannelEventHub(peerInfo);
 }
 
 
@@ -727,7 +693,6 @@ exports.getMspID = getMspID;
 exports.ORGS = ORGS;
 exports.CONFIG_DIR = CONFIG_DIR;
 exports.newPeers = newPeers;
-// exports.newEventHubs = newEventHubs;
 exports.newPeer = newPeer;
 exports.newEventHub = newEventHub;
 
