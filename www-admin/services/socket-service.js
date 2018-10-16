@@ -15,6 +15,14 @@ function SocketService(env, $rootScope, $log) {
 
   var socket;
   SocketService.state = STATE_DISCONNECTED;
+
+  function _setState(newState) {
+    'use strict';
+    return function() {
+      SocketService.state = newState;
+      $rootScope.$apply();
+    }
+  }
   /**
    *
    */
@@ -22,18 +30,14 @@ function SocketService(env, $rootScope, $log) {
     if(socket){
       return socket;
     }
-    // var socket = io('ws://localhost');
     socket = io(env.api);
 
-    socket.emit('hello', 'Hi from client');
-    socket.on('hello', function(payload){
-      $log.debug('server hello:', payload);
+    socket.on('connect', function(){
+      _setState(STATE_CONNECTED)();
     });
-
-    socket.on('connect',      function(){              SocketService.state = STATE_CONNECTED;   $rootScope.$apply(); });
-    socket.on('disconnect',   function(/*reason*/){        SocketService.state = STATE_DISCONNECTED;$rootScope.$apply(); });
-    socket.on('reconnecting', function(/*attemptNumber*/){ SocketService.state = STATE_CONNECTING;  $rootScope.$apply(); });
-    socket.on('reconnect_error', function(/*error*/){      SocketService.state = STATE_ERROR;       $rootScope.$apply(); });
+    socket.on('disconnect',   _setState(STATE_DISCONNECTED));
+    socket.on('reconnecting', _setState(STATE_CONNECTING));
+    socket.on('reconnect_error', _setState(STATE_ERROR));
 
     socket.on('status', function(status){
       $log.debug('server status:', status);

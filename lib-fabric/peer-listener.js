@@ -21,21 +21,23 @@ const channelEventHubs = {};
 
 /**
  * @param {Channel} channel
+ * @param {boolean} fullBlock
  * @return {ChannelEventHub}
  */
-function listenChannel(channel) {
+function listenChannel(channel, fullBlock) {
 
   if (!channelEventHubs[channel._name]) {
-    channelEventHubs[channel._name] = _connect(channel);
+    channelEventHubs[channel._name] = _connect(channel, fullBlock);
   }
   return channelEventHubs[channel._name];
 }
 
 /**
  * @param {Channel} channel
+ * @param {boolean} fullBlock
  * @return {ChannelEventHub}
  */
-function _connect(channel) {
+function _connect(channel, fullBlock) {
   const channelName = channel._name;
 
 
@@ -47,7 +49,7 @@ function _connect(channel) {
   channel_event_hub._connectTimer.unref();
   logger.debug('connecting to channel:', channelName);
   blockEvents.emit('connecting');
-  __connect();
+  __connect(fullBlock);
 
   //
   function _checkConnection() {
@@ -66,27 +68,34 @@ function _connect(channel) {
   }
 
   function __logStreamError(err) {
-    console.log('***********************************************');
-    console.log('            Channel error occurred             ');
-    console.log('***********************************************');
-    console.log(err);
-    console.log(JSON.stringify(err));
+    logger.info('***********************************************');
+    logger.info('            Channel error occurred             ');
+    logger.info('***********************************************');
+    logger.info(err);
+    logger.info(JSON.stringify(err));
 
-    __connect(channel);
+    __connect(fullBlock);
   }
 
 
-  function __connect() {
-    const reg_num = channel_event_hub.registerBlockEvent(function (blockFiltered) {
-        // console.log(blockFiltered);
+  function __connect(fullBlock) {
+    const reg_num = channel_event_hub.registerBlockEvent(function (block) {
 
+        if (fullBlock) {
+          const blockHash = block.header.data_hash;
+          logger.info('Received block (((event))) with hash:', blockHash);
+          blockEvents.emit('block_success', block);
+
+          return;
+        }
+
+        const blockFiltered = block;
         const first_tx = blockFiltered.filtered_transactions[0].txid; // get the first transaction
         const channel_id = blockFiltered.channel_id;
         if (channelName !== channel_id) {
           return;
         }
 
-        // const blockHash = block.header.data_hash;
         logger.info('Received block (((event))) for transaction:', first_tx);
 
         // make compartible block info
@@ -125,7 +134,7 @@ function _connect(channel) {
       // `disconnect` is also not specified and will default to false
     );
 
-    channel_event_hub.connect();
+    channel_event_hub.connect(true);
   }
 
   return channel_event_hub;
@@ -189,11 +198,11 @@ function unregisterBlockEvent(onEvent, onError) {
  *                             is shutdown. The shutdown may be caused by a network error or by
  *                             a call to the "disconnect()" method or a connection error.
  */
-function registerTxEvent(txid, onEvent, onError) {
+function registerTxEvent(/*txid, onEvent, onError*/) {
   logger.warn('METHOD REMOVED');
 }
 
-function unregisterTxEvent(txid) {
+function unregisterTxEvent(/*txid*/) {
   logger.warn('METHOD REMOVED');
 }
 

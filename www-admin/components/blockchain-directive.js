@@ -1,10 +1,10 @@
-angular.module('altrs.directive.blockchain', ['altrs.service.socket'])
+angular.module('altrs.directive.blockchain', ['altrs.service.socket', 'altrs.service.channel'])
 
 // scope:
 // = is for two-way binding
 // @ simply reads the value (one-way binding)
 // & is used to bind functions
-.directive('blockchainLog', function($document, SocketService, $log){
+.directive('blockchainLog', function($document, SocketService, ChannelService, $log){
   return {
     restrict:'E',
     replace: false,
@@ -17,7 +17,7 @@ angular.module('altrs.directive.blockchain', ['altrs.service.socket'])
                   '<div id="details" ng-show="!!ctl.blockInfo" >'+
                     '<p> Block:    {{ctl.blockInfo.header.data_hash|limitTo:25}}...'+
                       '<br> TXID:     {{ctl.blockInfo.data.data[0].payload.header.channel_header.tx_id|limitTo:25}}...'+
-                      '<br> Type:     {{ctl.blockInfo.data.data[0].payload.header.channel_header.type}}'+
+                      '<br> Type:     {{ctl.blockInfo.data.data[0].payload.header.channel_header.typeString}}'+
                       '<br> Created:  {{ctl.blockInfo.data.data[0].payload.header.channel_header.timestamp}}'+
                       '<br> Height:   {{ctl.blockInfo.header.number}}'+
                     '</p>'+
@@ -64,6 +64,15 @@ angular.module('altrs.directive.blockchain', ['altrs.service.socket'])
       ctl.init = function(){
         // var socket = io('ws://'+location.hostname+':8155/');
         socket = SocketService.getSocket();
+
+
+        ChannelService.list()
+          .then(function(channels) {
+            socket.emit('listen_channel', {
+              channelId: channels[0].channel_id,
+              fullBlock: true
+            });
+          });
 
         $log.log('chainblock event registered');
         socket.on('chainblock', function(payload){
