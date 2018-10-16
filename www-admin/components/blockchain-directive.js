@@ -66,13 +66,19 @@ angular.module('altrs.directive.blockchain', ['altrs.service.socket', 'altrs.ser
         socket = SocketService.getSocket();
 
 
-        ChannelService.list()
-          .then(function(channels) {
-            socket.emit('listen_channel', {
-              channelId: channels[0].channel_id,
-              fullBlock: true
-            });
-          });
+        socket.on('connect', function() {
+          'use strict';
+          //in some cases config is still loading and fetching channels will fail because of peer absence
+          setTimeout(function() {
+            ChannelService.list()
+              .then(function(channels) {
+                socket.emit('listen_channel', {
+                  channelId: channels[0].channel_id,
+                  fullBlock: true
+                });
+              });
+          }, 5000);
+        });
 
         $log.log('chainblock event registered');
         socket.on('chainblock', function(payload){

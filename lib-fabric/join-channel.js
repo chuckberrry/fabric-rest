@@ -15,15 +15,12 @@
  */
 "use strict";
 const util = require('util');
-const path = require('path');
-const fs = require('fs');
 
 let tx_id = null;
 const config = require('../config.json');
 const helper = require('./helper.js');
 const logger = helper.getLogger('Join-Channel');
 const ORGS = helper.ORGS;
-const CONFIG_DIR = helper.CONFIG_DIR;
 const allEventhubs = [];
 
 // on process exit, always disconnect the event hub
@@ -78,12 +75,7 @@ const joinChannel = function(peers, channelID, username, org) {
 			for (let key in ORGS[org]) {
 				if (ORGS[org].hasOwnProperty(key)) {
 					if (key.indexOf('peer') === 0) {
-						let data = fs.readFileSync(path.join(CONFIG_DIR, ORGS[org][key]['tls_cacerts']));
-						let eh = client.newEventHub();
-						eh.setPeerAddr(ORGS[org][key].events, {
-							pem: Buffer.from(data).toString(),
-							'ssl-target-name-override': ORGS[org][key]['server-hostname']
-						});
+						let eh = helper.newEventHub(channel, key, org);
 						eh.connect();
 						eventhubs.push(eh);
 						allEventhubs.push(eh);
