@@ -21,13 +21,13 @@ const channelEventHubs = {};
 
 /**
  * @param {Channel} channel
- * @param {boolean} fullBlock
+ * @param {boolean?} fullBlock
  * @return {ChannelEventHub}
  */
 function listenChannel(channel, fullBlock) {
 
   if (!channelEventHubs[channel._name]) {
-    channelEventHubs[channel._name] = _connect(channel, fullBlock);
+    channelEventHubs[channel._name] = _connect(channel, fullBlock || false);
   }
   return channelEventHubs[channel._name];
 }
@@ -49,7 +49,7 @@ function _connect(channel, fullBlock) {
   channel_event_hub._connectTimer.unref();
   logger.debug('connecting to channel:', channelName);
   blockEvents.emit('connecting');
-  __connect(fullBlock);
+  __connect();
 
   //
   function _checkConnection() {
@@ -78,7 +78,7 @@ function _connect(channel, fullBlock) {
   }
 
 
-  function __connect(fullBlock) {
+  function __connect() {
     const reg_num = channel_event_hub.registerBlockEvent(function (block) {
 
         if (fullBlock) {
@@ -134,7 +134,7 @@ function _connect(channel, fullBlock) {
       // `disconnect` is also not specified and will default to false
     );
 
-    channel_event_hub.connect(true);
+    channel_event_hub.connect(fullBlock);
   }
 
   return channel_event_hub;
