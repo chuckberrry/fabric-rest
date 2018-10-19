@@ -95,34 +95,32 @@ function invokeChaincode(peersUrls, channelID, chaincodeName, fcn, args, usernam
 			// set the transaction listener and set a timeout of 30sec
 			// if the transaction did not get committed within the timeout period,
 			// fail the test
-			const transactionID = tx_id.getTransactionID();
 
-			let txPromise = new Promise((resolve, reject) => {
-				let handle = setTimeout(() => {
-					// eh.disconnect();
-					reject(new Error('TIMEOUT'));
-				}, parseInt(config.eventWaitTime));
+      const channelEventHub = peerListener.listenChannel(channel);
+      let eventMonitor = new Promise((resolve, reject) => {
+        let handle = setTimeout(() => {
+          // do the housekeeping when there is a problem
+          channelEventHub.unregisterTxEvent(tx_id);
+          logger.warn('Timeout - Failed to receive the transaction event');
+          reject(new Error('Timed out waiting for block event'));
+        }, parseInt(config.eventWaitTime));
 
+        channelEventHub.registerTxEvent((event_tx_id/*, status, block_num*/) => {
+            clearTimeout(handle);
+            channelEventHub.unregisterTxEvent(event_tx_id);
+            logger.debug('Successfully received the transaction event');
 
-				peerListener.registerTxEvent(transactionID, (tx, code) => {
-					clearTimeout(handle);
-					peerListener.unregisterTxEvent(transactionID);
-
-					if (code !== 'VALID') {
-						logger.warn('Invoke failed, code = ' + code);
-						const e = new Error('Invoke failed: '+code);
-						e.code = code;
-						reject(e);
-					} else {
-						logger.info('Invoke succeed');
-						resolve(tx);
-					}
-				});
-			});
+            resolve(event_tx_id);
+          }, (error)=> {
+            clearTimeout(handle);
+						logger.warn('Failed to receive the transaction event ::'+error);
+            reject(error);
+          }
+        );
+      });
 
 			logger.debug('Committing transaction "%j"', tools.replaceBuffer(tx_id));
-			const sendPromise = channel.sendTransaction(request);
-			return Promise.all([sendPromise, txPromise]).then((results) => {
+			return Promise.all([channel.sendTransaction(request), eventMonitor]).then((results) => {
 			// return Promise.all([sendPromise].concat(eventPromises)).then((results) => {
 				logger.debug(' event promise all complete and testing complete');
 				return results[0]; // the first returned value is from the 'sendPromise' which is from the 'sendTransaction()' call
