@@ -1,0 +1,117 @@
+<mvc:View controllerName="aqismockup.aqismockup.controller.View1" xmlns:l="sap.ui.layout" xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:si="sap.suite.ui.commons.statusindicator" displayBlock="true" xmlns="sap.m">
+	<Shell id="shell">
+		<App id="app">
+			<pages>
+				<Page id="page" showHeader="false" class="page">
+					<content>
+						<!---Header-->
+						<HBox alignItems="Center" alignContent="Center" justifyContent="SpaceBetween" class="sapUiSmallMargin">
+							<VBox>
+								<Text text="{ path: '/currentDate', type: 'sap.ui.model.type.Time', formatOptions: { style: 'short', pattern: 'HH:mm' } }"
+									class="headerLabel"/>
+								<Text text="{ path: '/currentDate', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd.MM.yyyy' } }" class="white"/>
+								<layoutData>
+									<FlexItemData growFactor="2"/>
+								</layoutData>
+							</VBox>
+							<Label textAlign="Center" text="Radlader - HM Rahmen" class="headerLabel">
+								<layoutData>
+									<FlexItemData growFactor="1" alignSelf="Center"/>
+								</layoutData>
+							</Label>
+							<VBox class="demoBox">
+								<Image src="img/logo.png" width="60%"/>
+							</VBox>
+						</HBox>
+						<Label text=" " class="big"></Label>
+						<grid:CSSGrid id="grid1" gridTemplateColumns="45% 5% 45%" gridTemplateRows="13rem" gridGap="1rem" class="sapUiSmallMargin">
+							<grid:items>
+								<VBox alignContent="Center" justifyContent="Center" class="demoBox">
+									<Text text="Aktuell" class="headerLabel" textAlign="Center">
+										<layoutData>
+											<FlexItemData alignSelf="Center"/>
+										</layoutData>
+									</Text>
+									<Text text="{/countDown}" class="big" textAlign="Center">
+										<layoutData>
+											<FlexItemData alignSelf="Center"/>
+										</layoutData>
+									</Text>
+									<Text text="Taktzeit 31 Minuten" class="headerLabel" textAlign="Center">
+										<layoutData>
+											<FlexItemData alignSelf="Center"/>
+										</layoutData>
+									</Text>
+								</VBox>
+								<VBox alignContent="Center" justifyContent="Center" class="demoBox">
+									<si:StatusIndicator id="indicator" value="{/progress}" width="auto" height="208px" class="sapUiSmallMargin">
+										<si:ShapeGroup>
+											<si:Rectangle x="0" y="0" width="100" height="208" strokeWidth="1" fillingType="Linear"/>
+										</si:ShapeGroup>
+										<si:propertyThresholds>
+											<si:PropertyThreshold fillColor="Critical" toValue="40"/>
+											<si:PropertyThreshold fillColor="Error" toValue="20"/>
+											<si:PropertyThreshold fillColor="#17816A" toValue="100"/>
+										</si:propertyThresholds>
+									</si:StatusIndicator>
+								</VBox>
+								<VBox alignContent="Center" class="demoBox">
+									<Text text="Stückzahlen" class="headerLabel" textAlign="Center">
+										<layoutData>
+											<FlexItemData alignSelf="Center"/>
+										</layoutData>
+									</Text>
+									<Text text=" Ziel &#x9;      Soll &#x9;        Ist" class="headerLabel" renderWhitespace="true">
+										<layoutData>
+											<FlexItemData alignSelf="Center"/>
+										</layoutData>
+									</Text>
+									<Text text="{/ziel} / {/soll} / {/ist}" class="big" renderWhitespace="true">
+										<layoutData>
+											<FlexItemData alignSelf="Center"/>
+										</layoutData>
+									</Text>
+								</VBox>
+							</grid:items>
+						</grid:CSSGrid>
+						<!--<HBox items="{/status}">-->
+						<!--	<items>-->
+						<!--		<Text text="{StatusIndicator}"/>-->
+						<!--	</items>-->
+						<!--</HBox>-->
+						<VBox alignItems="Center" alignContent="Center" justifyContent="Center">
+							<HBox height="100px" alignItems="End" alignContent="Center" justifyContent="SpaceBetween" width="70%">
+								<items>
+									<Text text="HM 00" class="headerLabel" width = "120px" textAlign = "Center"/>
+									<Text text="HM 01" class="headerLabel" width = "120px" textAlign = "Center"/>
+									<Text text="HM 02" class="headerLabel" width = "120px" textAlign = "Center"/>
+									<Text text="HM 03" class="headerLabel" width = "120px" textAlign = "Center"/>
+									<Text text="HM 04" class="headerLabel" width = "120px" textAlign = "Center"/>
+									<Text text="HM 05" class="headerLabel" width = "120px" textAlign = "Center"/>
+								</items>
+							</HBox>
+							<HBox height="100px" alignItems="Center" alignContent="Center" justifyContent="SpaceBetween" width="70%">
+								<items>
+									<VBox alignContent="Center" justifyContent="Center" class="standardBox" height = "80%" width = "120px"/>
+									<VBox alignContent="Center" justifyContent="Center" class="standardBox" height = "80%" width = "120px"/>
+									<VBox alignContent="Center" justifyContent="Center" class="standardBox" height = "80%" width = "120px"/>
+									<VBox alignContent="Center" justifyContent="Center" class="lightningBox" height = "80%" width = "120px">
+										<Text text="Logistik"></Text>
+									</VBox>
+									<VBox alignContent="Center" justifyContent="Center" class="standardBox" height = "80%" width = "120px"/>
+									<VBox alignContent="Center" justifyContent="Center" class="standardBox" height = "80%" width = "120px"/>
+								</items>
+							</HBox>
+						</VBox>
+						<HBox class="sapUiSmallMargin" alignContent="Center" justifyContent="Center">
+							<HBox class="demoBox" alignContent="Center" justifyContent="Center" width="75%">
+								<Text text="{/info}" class="headerLabel" textAlign="Center"></Text>
+							</HBox>
+						</HBox>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

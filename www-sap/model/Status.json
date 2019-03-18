@@ -1,0 +1,12 @@
+{
+	"status" : [
+			{
+				"OperationNo" : "HM10",
+				"StatusIndicator" : "Critical"
+			},
+				{
+				"OperationNo" : "HM20",
+				"StatusIndicator" : "Success"
+			}
+		]
+}

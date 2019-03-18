@@ -1,0 +1,56 @@
+.page{
+      background-color:#555E5D;
+       }
+
+.headerLabel{
+     font-size: 2rem;
+     color: #FFFFFF;
+    }
+    
+.white{
+     font-size: 1rem;
+     color: #FFFFFF;
+    }
+    
+.big{
+     font-size: 7rem;
+    }
+.sapMFlexBox.demoBox {
+	border-radius: 10px;
+	background-color: #FFFFFF;
+	text-align: center;
+}
+.demoBox .sapMTitle,
+.demoBox .sapMText {
+	color: #000000;
+}
+
+.sapMFlexBox.lightningBox {
+	border-radius: 10px;
+	background-color: #FFC001;
+	text-align: center;
+}
+.lightningBox .sapMTitle,
+.lightningBox .sapMText {
+	color: #000000;
+}
+
+.sapMFlexBox.standardBox {
+	border-radius: 10px;
+	background-color: #17816A;
+	text-align: center;
+}
+.standardBox .sapMTitle,
+.standardBox .sapMText {
+	color: #000000;
+}
+
+.sapMFlexBox.sapMFlexBoxWrapNoWrap.sapMVBox .demoInnerBox {
+	background: lightblue;
+	border-radius: 10px;
+}
+
+.sapMFlexBox.sapMFlexBoxWrapNoWrap.sapMVBox .demoInnerBox .sapMTitle,
+.sapMFlexBox.sapMFlexBoxWrapNoWrap.sapMVBox .demoInnerBox .sapMText {
+	color: #000000;
+}

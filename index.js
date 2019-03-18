@@ -36,6 +36,7 @@ var socketOptions = { origins: '*:*'};
 ////
 var app = express();
 var adminApp = require('./app/express-web-app')('www-admin', clientEnv);
+var sapApp = require('./app/express-web-app')('www-sap', clientEnv);
 var webApp   = require('./app/express-web-app')(WEB_DIR, clientEnv);
 var apiApp   = require('./app/express-api-app')(); // TODO: this app still uses process.env. get rid of it
 
@@ -45,6 +46,7 @@ app.get('/',  (req, res)=>res.redirect('/web') );
 app.use('/web',         webApp);
 app.get('/favicon.ico', webApp.handle.bind(webApp) );
 app.use('/admin',       adminApp);
+app.use('/sap',       sapApp);
 
 autoloadMiddleware(app, './middleware-system/map.json');
 autoloadMiddleware(app, M_C_F);
