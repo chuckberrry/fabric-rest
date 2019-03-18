@@ -1,3 +1,8 @@
 {
-  "middleware":[]
+  "middleware":[
+    {
+      "name":"API User Auth",
+      "file":"./index.js"
+    }
+  ]
 }
